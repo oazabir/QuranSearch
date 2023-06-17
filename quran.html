@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+
+<!--
+
+    TODO:
+    - Build a Table of content with surah name and page number
+    - Skip basmalah on surah 9
+    - Check how 6pt and 7pt font looks after printing in A4 and B5.
+
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quran A4 Pages</title>
+    <style>
+        @font-face {
+            font-family: 'KFGQPC HAFS Uthmanic Script';
+            src: url('css/KFGQPCHAFSUthmanicScript-Regula.woff2') format('woff2'),
+                url('css/KFGQPCHAFSUthmanicScript-Regula.woff') format('woff');
+
+            /* src: url('css/KFGQPC Uthmanic Script HAFS Regular.otf') format("opentype"); */
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+
+        rule {
+            cursor: pointer;
+        }
+
+        rule.ham_wasl,
+        rule.slnt,
+        rule.laam_shamsiyah {
+            color: #aaaaaa;
+        }
+
+        rule.ham_wasl:hover,
+        rule.slnt:hover,
+        rule.laam_shamsiyah:hover {
+            background-color: #d7d7d7;
+        }
+
+        rule.madda_normal {
+            color: #537fff;
+        }
+
+        rule.madda_permissible {
+            color: #4050ff;
+        }
+
+        rule.madda_necessary {
+            color: #000ebc;
+        }
+
+        rule.madda_obligatory {
+            color: #2144c1;
+        }
+
+        rule.qalaqah {
+            color: #dd0008;
+        }
+
+        rule.qalaqah:hover {
+            background-color: #f3a6a9;
+            color: #dd0008;
+        }
+
+        rule.ikhafa_shafawi {
+            color: #d500b7;
+        }
+
+        rule.ikhafa_shafawi:hover {
+            background-color: #f0a6e6;
+            color: #d500b7;
+        }
+
+        rule.ikhafa {
+            color: #9400a8;
+        }
+
+        rule.ikhafa:hover {
+            background-color: #daa6e1;
+            color: #9400a8;
+        }
+
+        rule.iqlab {
+            color: #26bffd;
+        }
+
+        rule.iqlab:hover {
+            background-color: #92e5ff;
+            color: #0099c5;
+        }
+
+        rule.idgham_shafawi {
+            color: #58b800;
+        }
+
+        rule.idgham_shafawi:hover {
+            background-color: #bae890;
+            color: #58b800;
+        }
+
+        rule.idgham_ghunnah {
+            color: #169200;
+        }
+
+        rule.idgham_ghunnah:hover {
+            background-color: #9ce58e;
+            color: #169200;
+        }
+
+        rule.idgham_wo_ghunnah {
+            color: #169200;
+        }
+
+        rule.idgham_wo_ghunnah:hover {
+            background-color: #9ce58e;
+            color: #169200;
+        }
+
+        rule.idgham_mutajanisayn,
+        rule.idgham_mutaqaribayn {
+            color: #a1a1a1;
+        }
+
+        rule.idgham_mutajanisayn:hover,
+        rule.idgham_mutaqaribayn:hover {
+            background-color: #d7d7d7;
+        }
+
+        rule.ghunnah {
+            color: #ff7e1e;
+        }
+
+        rule.ghunnah:hover {
+            background-color: #ff7e1e;
+            color: black;
+        }
+
+    </style>
+
+    <style>
+        .b5-page {
+            width: 182mm;
+            height: 257mm;
+        }
+
+        .a4-page {
+            width: 210mm;
+            height: 297mm;
+        }
+
+        .page {
+            position: relative;
+            margin: 0 auto;
+            overflow: hidden;
+            padding: 5mm;
+            /* box-sizing: border-box; */
+            background-color: white;
+            /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); */
+            page-break-after: always;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        .tafsir_page {
+            font-size: 8pt;
+            column-width: 45mm;
+        }
+
+        .tafsir_page h2,
+        h3 {
+            font-size: 10pt;
+            font-weight: bold;
+            margin: 0;
+            margin-bottom: 5px;
+        }
+
+        .tafsir_page p {
+            font-size: 8pt;
+            margin: 0;
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+        .tafsir_page .page_inner {
+            display: none;
+        }
+
+        .verses {
+            position: relative;
+            float: right;
+            width: 500px;
+            margin: 10px;
+            border: solid 1px lightgray;
+            /* height: 60%; */
+        }
+
+        .verses_even {
+            float: left;
+        }
+
+        .translations {
+            position: relative;
+            padding: 10px;
+            font-size: 10pt;
+            line-height: 1.25em;
+
+            /* border: solid 2px black; */
+        }
+
+        .translations_condensed {
+            line-height: 1.2em;
+            font-size: 9pt;
+        }
+
+        .one-translation {
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+
+
+        .one-translation .verse_number {
+            /* font-family: 'KFGQPC HAFS Uthmanic Script'; */
+            background-color: azure;
+            border-radius: 20px;
+            border: solid 5px azure;
+        }
+
+        .line {
+            padding-bottom: 5px;
+            border-bottom: solid 1px rgb(241, 241, 241);
+            clear: both;
+            /* height: 60px; */
+            width: 100%;
+            display: block;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* div.line:before {
+            position: absolute;
+            z-index: -1;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            content: "";
+            background-color: lightgray;
+        } */
+
+        .line_condensed {
+            transform: scale(0.9, 1);
+             margin-left: -20px;
+        }
+
+        .line>table {
+            direction: rtl;
+            vertical-align: top;
+            text-align: center;
+            table-layout: auto;
+            border-spacing: 0;
+            margin: 0 auto 0 auto;
+        }
+
+        .line td {
+            vertical-align: top;
+            padding-right: 5px;
+        }
+
+        .aword {
+            /* border: solid 1px grey; */
+        }
+
+        .aword .arabic,
+        .aword .english {
+            display: block;
+            /* border: solid 1px lightgray; */
+        }
+
+        .aword .arabic {
+            height: 40px;
+            text-align: center;
+
+            font-family: 'KFGQPC HAFS Uthmanic Script';
+            font-size: 16pt;
+            margin-right: 5px;
+        }
+
+        .aword .arabic img {
+            height: 50px;
+        }
+
+        .aword .english {
+            /* max-width: 50px;
+            min-width: 40px; */
+            font-size: 7pt;
+            text-align: center;
+            color: #a0a0a0;
+            line-height: 1em;
+        }
+
+        .aword .english_alternate {
+            font-style: italic;
+            color: lightslategray;
+        }
+
+        .aword .end>* {
+            width: 20px;
+        }
+
+
+        .heading {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 40px;
+            border: solid 1px black;
+        }
+
+        .mushaf_pageNo {
+            color: black;
+            font-size: 12pt;
+            line-height: 40px;
+            width: 40px;
+            text-align: center;
+            border-radius: 50%;
+            border-color: black;
+            background-color: lightgrey;
+            margin-right: 20px;
+        }
+
+        .print_pageNo {
+            color: black;
+            font-size: 12pt;
+            line-height: 40px;
+            width: 40px;
+            text-align: center;
+            border-radius: 50%;
+            border-color: black;
+            background-color: lightgrey;
+            margin-left: 20px;
+        }
+
+        .surahNames {
+            flex-grow: 1;
+            position: relative;
+            color: black;
+            font-size: 10pt;
+            line-height: 40px;
+            font-size: 14pt;
+            text-align: center;
+        }
+
+        .surahNames span {
+            margin-left: 10px;
+        }
+
+        .surahNames span:not(:last-child):after {
+            content: ' |';
+        }
+
+        .box {
+            position: relative;
+            width: 100%;
+            height: auto;
+            padding: 2px;
+            border: 2px solid #b78846;
+        }
+
+        .box:before,
+        .box:after {
+            content: "•";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            font-size: 14px;
+            color: #b78846;
+            border: 2px solid #b78846;
+            line-height: 12px;
+            top: 5px;
+            text-align: center;
+        }
+
+        .box:before {
+            left: 5px;
+        }
+
+        .box:after {
+            right: 5px;
+        }
+
+        .box .box-inner {
+            position: relative;
+            border: 2px solid #b78846;
+            padding: 1px;
+        }
+
+        .box .box-inner:before,
+        .box .box-inner:after {
+            content: "•";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            font-size: 14px;
+            color: #b78846;
+            border: 2px solid #b78846;
+            line-height: 12px;
+            bottom: -2px;
+            text-align: center;
+        }
+
+        .box .box-inner:before {
+            left: 1px;
+            bottom: 2px;
+        }
+
+        .box .box-inner:after {
+            right: 1px;
+            bottom: 2px;
+        }
+
+        .heading>.box-inner {
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: flex-start;
+        }
+
+        .translations .surah_name {
+            font-weight: bold;
+            font-size: 12pt;
+            line-height: 23px;
+            height: 23px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .translations .surah_details {
+            height: 20px;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .surah_heading {
+            /* border-bottom: solid 1px lightgrey; */
+            margin-bottom: 10px;
+        }
+
+        .surah_heading_inner {
+            background: transparent url('data:image/png;base64,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');
+            background-size: 500px 50px;
+
+
+            background-color: white;
+            height: 35px;
+            padding: 2px;
+            border: solid 2px dimgray;
+        }
+
+        .surah_heading .surah_name {
+            text-align: center;
+            line-height: 30px;
+            width: fit-content;
+            margin: 0px auto 0px auto;
+            background: lightyellow;
+            padding: 2px;
+            border-radius: 20px;
+            padding-right: 10px;
+            padding-left: 10px;
+            color: slateblue;
+        }
+
+        .surah_name .arabic {
+            font-size: 25px;
+            line-height: 30px;
+            font-family: 'KFGQPC HAFS Uthmanic Script';
+        }
+
+        .surah_name .english {
+            font-size: 16px;
+            line-height: 30px;
+            margin-left: 10px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+        }
+
+        .surah_heading .basmalah {
+            text-align: center;
+            height: 60px;
+            line-height: 50px;
+        }
+
+        .basmalah_translation {
+            font-size: 10px;
+            line-height: 10px;
+            color: dimgray;
+            top: -5px;
+            position: relative;
+        }
+
+        .surah_heading_inner {
+            background-color: white;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0px;
+            height: 25px;
+        }
+
+        .tajweed_panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 8pt;
+        }
+
+        .tajweed_item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tajweed_color {
+            width: 10px;
+            height: 10px;
+            background: azure;
+        }
+
+        .tajweed_sample {
+            font-family: 'KFGQPC HAFS Uthmanic Script';
+            font-size: 10pt;
+        }
+
+        #toc {
+            flex-direction: column;
+            display: flex;
+        }
+        #toc_surah {
+            font-size: 12pt;
+            font-weight: bold;
+        }
+        .toc_surah {
+            display: flex;
+        }
+        .toc_surah_name {
+            flex-grow: 1;
+        }
+        .toc_mushaf_page {
+
+        }
+        .toc_print_page {
+
+        }
+    </style>
+</head>
+
+<body>
+    <div id="toc" class="page a4-page">
+        <div id="toc_heading" class="toc_surah">
+            <div class="toc_surah_name">Surah</div>
+            <div class="toc_mushaf_page">Mushaf Page</div>
+            <div class="toc_print_page">Print page</div>
+        </div>
+
+    </div>
+    <div id="page_template" class="page a4-page">
+        <div class="page_inner">
+            <div class="heading box">
+                <div class="box-inner">
+                    <div class="print_pageNo"></div>
+                    <div class="surahNames"></div>
+                    <div class="mushaf_pageNo"></div>
+                </div>
+            </div>
+            <div class="verses"></div>
+            <div class="translations"></div>
+            <div class="footer">
+                <div class="tajweed_panel">
+                    <div class="tajweed_item">
+                        <div class="tajweed_color"></div>
+                        <div class="tajweed_sample">
+                            <rule class="qalaqah"></rule>
+                        </div>
+                        <div class="tajweed_meaning"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="surah_heading_template" class="surah_heading">
+        <div class="surah_heading_inner">
+            <div class="surah_name">
+
+            </div>
+        </div>
+        <div class="basmalah">
+            <svg baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" width="220" height="35" viewBox="0 0 176 26"
+                overflow="inherit" xml:space="preserve">
+                <switch>
+                    <g>
+                        <path fill="currentColor"
+                            d="M165.716 11.67c-.586-.089-1.021-.134-1.306-.134-.277 0-.644.273-1.099.818-.391.472-.586.781-.586.928a.217.217 0 0 0 .03.061c.012.016.03.024.055.024.008 0 .09-.063.244-.189s.301-.189.439-.189c.969 0 1.64.094 2.014.281-.357.26-.943.521-1.757.781-.659.211-.981.354-.965.427.024.081.366.094 1.025.037.651-.057 1.099-.143 1.343-.256.31-.146.667-.464 1.074-.952.439-.521.659-.932.659-1.233.002-.148-.389-.282-1.17-.404zm1.953 6.835c-.024 0-.092.13-.201.391-.11.26-.279.391-.507.391-.334 0-.501-.203-.501-.611 0-.179.051-.429.153-.75.102-.321.152-.535.152-.641 0-.065-.021-.105-.062-.122-.138-.073-.321.191-.549.793-.22.57-.329.989-.329 1.257 0 .277.081.546.243.807.188.284.411.427.672.427.342 0 .614-.179.817-.537.171-.301.257-.639.257-1.013.001-.277-.047-.408-.145-.392zm4.571 9.026c-.533-.271-.856-.408-.971-.408-.057 0-.207.258-.451.775-.244.516-.366.836-.366.958 0 .057.262.235.787.537.524.301.84.451.946.451.089 0 .254-.269.494-.806.239-.537.359-.879.359-1.025.001-.048-.266-.208-.798-.482zm2.203 3.449c-.058-.025-.92.346-2.588 1.11-1.701.781-2.648 1.257-2.844 1.429-.163.138-.362.361-.599.671-.284.366-.427.614-.427.745 0 .016.008.027.024.036-.073 0 .765-.411 2.515-1.233.919-.432 1.814-.846 2.685-1.244.163-.106.407-.338.732-.696.351-.391.525-.651.525-.781.002-.017-.007-.029-.023-.037zm-1.025-13.061c-1.074-2.034-1.733-3.051-1.978-3.051-.236 0-.354.504-.354 1.514 0 .35.04.785.122 1.306.089.545.166.818.231.818.122 0 .184-.403.184-1.208.398.529.956 1.489 1.672 2.881.789 1.529 1.184 2.502 1.184 2.917 0 .285-.211.428-.635.428-.301 0-.667-.062-1.099-.184-.488-.13-.817-.28-.988-.451.073-.488.041-.749-.098-.781-.114-.024-.293.265-.537.866-.244.603-.443.903-.598.903-.586 0-1.07-.142-1.453-.427.154-.521.244-.83.269-.928 0-.098-.028-.167-.085-.208-.106-.032-.257.114-.452.44-.261.438-.513.752-.757.939-.333.26-.813.391-1.44.391-.724 0-1.114-.057-1.171-.172.122-.072.237-.235.348-.488.109-.252.164-.459.164-.622 0-.098-.028-.15-.085-.158-.073-.017-.188.069-.342.256a2.502 2.502 0 0 1-.684.586c-.911.521-4.374 1.11-10.388 1.771-2.913.316-6.615.598-11.107.842-4.825.26-9.085.391-12.779.391-7.683 0-14.961-.342-21.837-1.025-2.971-.293-4.932-.537-5.884-.732-2.449-.496-4.142-1.266-5.078-2.307-.431-.48-.748-.717-.951-.708-.424.017-.854.415-1.294 1.196-.407.707-.61 1.298-.61 1.77 0 .326.187.659.562 1.001-2.222 1.603-3.942 2.815-5.163 3.638-.334.22-.484.357-.452.415.008.024.037.036.086.036.366 0 1.172-.252 2.416-.756 1.245-.506 2.011-.888 2.295-1.148.488-.447.903-1.082 1.245-1.904.269.18.738.362 1.41.55.671.187 1.166.272 1.482.257.098-.009.229-.257.391-.745 2.312.554 5.619 1.038 9.924 1.452 2.922.285 6.689.525 11.303.721 4.158.179 7.52.269 10.083.269 3.011 0 7.12-.163 12.328-.488 4.979-.31 9-.64 12.06-.989 4.833-.553 7.999-1.191 9.496-1.916a1.735 1.735 0 0 0-.085.439c0 .326.618.488 1.854.488.854 0 1.575-.342 2.161-1.025.586.473 1.232.708 1.94.708.398 0 .798-.603 1.196-1.807.212.188.582.432 1.11.732.627.358 1.059.537 1.294.537.236 0 .493-.179.77-.537.357-.472.537-1.082.537-1.831 0-1.052-.578-2.673-1.733-4.862zM96.61 4.59c-.109-.122-.229-.183-.359-.183-.847 0-1.567.635-2.161 1.904-.139-.008-.313-.063-.524-.165-.212-.102-.366-.152-.464-.152-.317 0-.647.22-.988.659-.31.399-.465.72-.465.964 0 .082.033.122.098.122.033 0 .161-.132.385-.397.224-.264.417-.396.58-.396.13 0 .34.071.629.213.288.143.563.214.823.214.684 0 1.29-.232 1.819-.696.528-.464.793-1.033.793-1.709a.566.566 0 0 0-.166-.378zm-1.788 10.669a1763.66 1763.66 0 0 0-.977-4.492c-.252-1.253-.406-1.879-.464-1.879-.235 0-.354.85-.354 2.551l.744 3.271c.529 2.278.858 3.812.989 4.601l.293 2.063c.105.7.183 1.05.231 1.05.236 0 .354-.766.354-2.295.003-.708-.271-2.332-.816-4.87zM85.998 6.91a7.41 7.41 0 0 0-.391 1.135c.879.968 1.363 2.079 1.453 3.332.024.366.061.549.109.549.18 0 .269-.435.269-1.306 0-1.383-.48-2.62-1.44-3.71zm2.514 6.298c-.081-.504-.188-.752-.317-.745-.105 0-.146.138-.122.415.032.326.024.529-.024.61a.632.632 0 0 1-.366.159c-.162.017-.276-.024-.342-.122-.032-.057-.057-.228-.073-.513-.008-.228-.053-.342-.134-.342-.082.017-.139.159-.171.427-.041.35-.077.562-.11.635-.105.236-.321.378-.646.427-.244 0-.395-.143-.452-.427 0-.089.028-.222.085-.397.057-.175.085-.303.085-.384 0-.065-.024-.11-.073-.134-.008-.008-.021-.012-.037-.012-.098 0-.236.24-.415.72-.13.342-.179.635-.146.879.073.578.391.838.952.781.293-.024.59-.228.891-.61.122.114.293.171.513.171.627 0 .94-.375.94-1.123a2.7 2.7 0 0 0-.038-.415zm-10.4-8.911c-.854 0-1.583.635-2.185 1.904-.114-.016-.279-.08-.494-.189-.216-.11-.38-.165-.495-.165-.301 0-.626.228-.977.684-.317.415-.476.741-.476.977 0 .089.032.134.098.134.041 0 .175-.134.402-.403.228-.269.427-.403.598-.403.123 0 .33.065.623.195s.559.196.794.196c.684 0 1.282-.22 1.794-.659.545-.472.818-1.042.818-1.709.001-.374-.166-.562-.5-.562zm13.793 16.82-1.953-5.053c-.057-.139-.114-.208-.171-.208-.017.008-.041.114-.073.317-.098.602-.146.976-.146 1.123 0 .391.336 1.402 1.007 3.033.672 1.632 1.008 2.565 1.008 2.802 0 .163-.139.244-.415.244a2 2 0 0 1-.317.024 1.862 1.862 0 0 1-1.526-.732c-.285-.358-.603-1.258-.952-2.697a485.636 485.636 0 0 1-.671-2.918c-.122-.521-.229-.781-.317-.781-.285.537-.428 1.046-.428 1.526 0 .114.062.407.184.879.423 1.644.635 2.707.635 3.186 0 .603-.24 1.074-.721 1.415-.423.302-.948.452-1.574.452-.977 0-1.53-.472-1.66-1.416-.049-.35-.073-1.126-.073-2.331 0-.659-.024-.989-.073-.989-.139 0-.269.273-.391.818a2.77 2.77 0 0 0-.073.599c0 .049-.354.24-1.062.573-.854.407-1.513.851-1.977 1.33-.277.285-.533.725-.769 1.318-.155.374-.057.655.293.843.26.139.598.207 1.013.207.903 0 1.501-.199 1.794-.598.024-.025.122-.191.293-.501.114-.212.232-.35.354-.415.033.773.183 1.339.452 1.697.439.586 1.042.879 1.807.879.806 0 1.465-.33 1.978-.989.276-.35.483-.769.622-1.257.098-.326.171-.518.22-.574.024.017.077.188.159.513.105.415.244.761.415 1.038.146.236.402.445.769.629.366.183.696.273.989.273.626 0 1.078-.346 1.354-1.037.138-.342.208-.875.208-1.599-.004-.715-.074-1.256-.212-1.623zm-10.247-7.665c-.542-.496-1.121-.745-1.739-.745-.261 0-.391.167-.391.5 0 .301.093.513.281.635-.09.236-.134.553-.134.952 0 .472.269.752.806.842-.285.407-.753.842-1.404 1.306a86.19 86.19 0 0 1-1.367.928c-.497.334-.724.545-.684.635.016.041.061.061.134.061.22 0 .626-.163 1.221-.488.562-.309 1.005-.59 1.331-.842.513-.398.984-.919 1.416-1.562.106 0 .271.047.495.14.224.094.376.14.458.14.261 0 .391-.28.391-.842-.002-.61-.273-1.163-.814-1.66zm15.679 16.075c-.203 0-.899.285-2.087.854-1.156.554-1.859.928-2.112 1.123-.398.399-.646.659-.744.781-.261.325-.366.524-.317.599.008.008.024.012.049.012a69.57 69.57 0 0 0 1.465-.793 95.53 95.53 0 0 1 2.941-1.404c.105-.081.269-.271.488-.567.22-.298.33-.494.33-.592 0-.009-.005-.013-.013-.013zM75.781 12.952c-.415-2.278-.639-3.548-.671-3.808-.073-.57-.154-.854-.244-.854-.041 0-.14.476-.299 1.428-.159.952-.222 1.514-.189 1.685.643 3.678 1.099 6.27 1.367 7.775.179 1.05.346 2.579.5 4.589.016.213.073.318.171.318.122 0 .183-.069.183-.208.154-.813.204-1.993.146-3.54-.057-1.701-.378-4.163-.964-7.385zm-5.859-7.556c-.049-.016-1.086.439-3.112 1.367-2.059.944-3.21 1.509-3.455 1.697-.146.114-.342.333-.586.659-.269.35-.403.59-.403.72 0 .024.008.037.024.037-.114 0 .712-.411 2.478-1.233 1.505-.7 2.775-1.278 3.808-1.733.163-.098.413-.336.751-.714.337-.378.506-.636.506-.775.001-.008-.003-.017-.011-.025zm-1.38 5.761c-.106-.569-.236-.842-.39-.818-.082.017-.123.085-.123.208 0 .082.012.202.037.36.024.159.037.279.037.36 0 .407-.171.61-.513.61a.33.33 0 0 1-.317-.195c-.024-.049-.062-.248-.11-.598-.041-.276-.102-.407-.183-.391-.09.017-.151.171-.183.464a8.914 8.914 0 0 1-.098.708c-.082.261-.305.411-.671.452-.261.065-.423-.077-.488-.427a1.056 1.056 0 0 1 .037-.403 2.17 2.17 0 0 0 .073-.415c0-.089-.024-.146-.073-.171-.017 0-.029-.004-.037-.012-.09 0-.232.265-.427.793-.09.391-.114.708-.073.952a.936.936 0 0 0 .366.623.842.842 0 0 0 .696.159c.447-.082.752-.305.916-.671a.788.788 0 0 0 .634.293c.635 0 .952-.427.952-1.282 0-.179-.021-.379-.062-.599zm11.536 16.4c-1.18.573-1.88.958-2.1 1.153-.448.398-.708.647-.781.744-.26.334-.354.537-.281.61a.052.052 0 0 0 .037.013c.049 0 .224-.09.525-.269.423-.252.732-.428.928-.525a216.721 216.721 0 0 1 2.966-1.416c.26-.195.5-.427.72-.695.269-.317.297-.477.085-.477-.22 0-.92.287-2.099.862zM59.547 7.3c-.586-.089-1.025-.134-1.318-.134-.277 0-.643.276-1.099.83-.399.48-.598.785-.598.916a.194.194 0 0 0 .037.048.08.08 0 0 0 .061.024c.016 0 .1-.062.25-.189.15-.126.291-.189.421-.189.195 0 .545.037 1.05.11.545.081.867.15.964.208-.358.244-.94.496-1.746.757-.659.211-.985.35-.977.415.024.057.167.085.427.085.83 0 1.477-.102 1.941-.305.301-.13.663-.444 1.086-.94.456-.521.684-.924.684-1.208.001-.164-.394-.306-1.183-.428zM72.4 16.271c-.57-3.222-.854-4.858-.854-4.907.26-.781.391-1.204.391-1.27-.008-.032-.082-.098-.22-.195-.383-.269-.598-.7-.647-1.294-.024-.261-.065-.391-.122-.391-.114 0-.252.293-.415.879-.146.529-.22.907-.22 1.135 0 .342.094.639.281.891l1.001 5.419c.651 3.516.977 5.525.977 6.03 0 .553-.464.83-1.392.83-.212 0-.362-.021-.452-.062a6.783 6.783 0 0 1-.769-.769c-.211.61-.403 1.232-.574 1.867.497.334.745.725.745 1.172 0 .285-.309.732-.928 1.343-1.286 1.27-2.754 1.904-4.406 1.904-.26 0-.647-.036-1.16-.11a8.954 8.954 0 0 0-1.147-.109c-.122 0-.183.032-.183.098 0 .146.277.361.83.646a8.06 8.06 0 0 0 1.233.537c.952.326 1.624.488 2.014.488.683 0 1.518-.464 2.502-1.391 1.123-1.059 1.798-2.242 2.026-3.553.781 0 1.375-.357 1.782-1.074.342-.586.513-1.298.513-2.136 0-.948-.269-2.942-.806-5.978zm-19.261-8.47c-.155.35-.285.724-.391 1.123.545.594.932 1.229 1.159 1.904.13.399.22.875.269 1.428.032.375.073.562.122.562.188 0 .281-.435.281-1.306 0-1.384-.48-2.621-1.44-3.711zM50.38 4.334c-.822 0-1.542.635-2.16 1.904-.146-.008-.324-.069-.531-.183-.208-.114-.36-.171-.458-.171-.317 0-.647.224-.989.671-.31.399-.464.729-.464.989 0 .089.037.134.11.134.041 0 .171-.134.391-.403s.407-.403.562-.403c.138 0 .352.065.641.195.289.13.56.195.812.195.692 0 1.3-.226 1.825-.678.525-.451.787-1.015.787-1.69-.001-.373-.177-.56-.526-.56zm2.325 10.791c-.525-.293-.84-.439-.946-.439-.082 0-.208.24-.378.72-.171.48-.256.793-.256.939 0 .122.23.33.69.623.459.292.758.439.897.439.081 0 .232-.264.452-.793s.33-.854.33-.976c-.001-.05-.264-.221-.789-.513zm-4.095-2.1c-.383-1.847-.631-3.121-.745-3.821-.089-.537-.183-.805-.281-.805-.041 0-.13.478-.268 1.434-.139.956-.191 1.516-.159 1.678a860.271 860.271 0 0 0 1.379 7.031c.211 1.14.403 2.669.574 4.59.049.212.118.317.208.317.065 0 .122-.082.171-.244.13-.847.155-2.014.073-3.504-.098-1.83-.415-4.056-.952-6.676zm-8.129-1.55c-.106-.569-.236-.842-.391-.818-.082.017-.122.085-.122.208 0 .082.014.202.042.36s.043.279.043.36c0 .407-.175.61-.525.61-.139 0-.244-.065-.317-.195a12.877 12.877 0 0 1-.085-.476l-.012-.122c-.041-.269-.102-.398-.183-.391-.098.017-.163.171-.195.464-.041.432-.069.667-.085.708-.082.261-.305.411-.671.452-.261.065-.427-.073-.5-.415-.017-.081-.002-.226.043-.433.044-.208.067-.344.067-.409 0-.089-.024-.15-.073-.183-.09-.049-.244.22-.464.806-.09.35-.11.667-.061.952.081.529.362.793.842.793.529 0 .907-.228 1.135-.684a.753.753 0 0 0 .623.293c.635 0 .952-.427.952-1.282a3.583 3.583 0 0 0-.063-.598zm15.422 17.552c-1.176.562-1.874.939-2.093 1.135a7.49 7.49 0 0 0-.745.781c-.277.334-.383.533-.317.598.008 0 .513-.26 1.514-.781a94.169 94.169 0 0 1 2.941-1.402c.285-.229.525-.461.72-.696.26-.317.289-.476.085-.476-.227 0-.929.28-2.105.841zM44.667 13.708c-.659-3.613-1.079-5.383-1.257-5.31-.22.089-.395.691-.525 1.806a17.57 17.57 0 0 0-.146 2.039c0 1.359.065 2.576.195 3.65.114.96.228 1.44.342 1.44.057 0 .085-.24.085-.72l-.073-2.587c-.024-1.196-.004-2.095.061-2.698l.891 4.651c.513 2.685.769 4.281.769 4.785 0 .252-.261.428-.781.525-.472.089-.802.094-.989.012-.309-.229-.533-.419-.671-.574-.269-.179-.48.033-.635.635-.163.595-.126 1.01.11 1.246.537.422.806.821.806 1.195 0 .619-.496 1.335-1.489 2.148-1.042.854-2.018 1.281-2.929 1.281-.912 0-1.546-.293-1.904-.879-.179-.293-.297-.756-.354-1.391-.049-.537-.106-.807-.171-.807-.171 0-.256.334-.256 1.002 0 .635.118 1.221.354 1.758.594 1.342 1.57 2.014 2.93 2.014 1.123 0 2.177-.68 3.161-2.039.928-1.277 1.371-2.461 1.331-3.552.83-.073 1.412-.407 1.746-1.001.252-.455.378-1.143.378-2.062-.002-.83-.328-3.019-.979-6.567zm-14.452-6.2c-6.274 1.57-10.225 2.75-11.852 3.54-.79.383-1.433.863-1.929 1.44-.399.464-.598.814-.598 1.05 0 .049.021.073.061.073-.016-.008.171-.142.562-.403.545-.366 1.298-.732 2.258-1.099 2.596-.993 5.989-1.994 10.18-3.002 4.28-1.034 8.78-2.071 13.5-3.113.529-.545.985-1.042 1.367-1.489-3.214.545-7.73 1.546-13.549 3.003zm35.325 8.593c-.407-.163-1.249-.578-2.527-1.245-.675-.35-1.293-.525-1.855-.525-1.058 0-1.791.5-2.197 1.501-.049.171-.094.342-.134.512a23.147 23.147 0 0 1 1.575-.061c.586 0 1.062.032 1.428.098.439.122 1.038.333 1.794.634-2.628.35-4.357.916-5.188 1.697-.204.188-.497.586-.879 1.196-.366.569-.627.915-.781 1.038-.358.284-.903.427-1.636.427-.333 0-.563-.047-.689-.141-.126-.093-.285-.308-.476-.641s-.352-.558-.482-.671c-.065-.058-.214.199-.446.769s-.262.973-.091 1.208c.496.66.745 1.294.745 1.904 0 1.855-2.673 3.801-8.02 5.835-4.378 1.668-9.313 2.502-14.806 2.502-5.477 0-10.306-1.106-14.489-3.319a18.333 18.333 0 0 1-3.039-2.027 24.436 24.436 0 0 1-1.831-1.696c-.448-.456-.7-.663-.757-.622-.008.008-.012.028-.012.061 0 .342.452 1.188 1.355 2.539 1.001 1.497 1.908 2.539 2.722 3.125 1.53 1.098 3.593 2.01 6.188 2.734 2.995.838 6.189 1.257 9.582 1.257 5.696 0 11.197-1.119 16.503-3.356 4.605-1.938 7.087-4.48 7.445-7.629.122.008.236.012.342.012 1.05 0 1.843-.557 2.38-1.672.789.96 1.782 1.44 2.979 1.44.333 0 .63-.302.891-.903.228-.521.341-.973.341-1.355 0-.602-.297-1.154-.891-1.66.391-.17 1.074-.354 2.05-.549 1.09-.22 2.01-.33 2.759-.33 1.204 0 2.547.249 4.028.745.822-.968 1.212-1.453 1.172-1.453-2.254-.472-3.938-.932-5.053-1.379zm-49.618-9.02c-.578-.089-1.013-.134-1.306-.134-.285 0-.655.276-1.11.83-.383.472-.574.777-.574.916 0 .057.024.085.073.085.016 0 .1-.063.25-.189s.287-.189.409-.189c.212 0 .566.032 1.062.098.537.081.867.155.989.22-.358.244-.944.496-1.757.756-.667.212-.989.346-.964.403.006.064.153.096.438.096.822 0 1.465-.089 1.929-.268.301-.155.659-.48 1.074-.977.439-.529.659-.936.659-1.221 0-.162-.391-.304-1.172-.426zm6.042 8.495a11.1 11.1 0 0 0-.11.549c-.073.334-.248.501-.525.501-.512 0-.769-.399-.769-1.196 0-.073.004-.183.012-.33.008-.146.012-.256.012-.33 0-.163-.024-.248-.073-.256-.106-.016-.204.228-.293.732a5.963 5.963 0 0 0-.122 1.025c0 .383.089.737.269 1.062.211.383.496.574.854.574.325 0 .582-.175.769-.525.146-.285.22-.606.22-.964 0-.626-.081-.907-.244-.842zm7.25 7.738c-.016-.016-.083.137-.201.458-.118.321-.177.519-.177.592 0 .024.008.049.024.073.838.92 1.314 2.03 1.428 3.332.032.375.073.562.122.562.163 0 .244-.428.244-1.282.001-1.399-.479-2.644-1.44-3.735zm8.899-6.078c-.797-.203-1.77-.525-2.917-.964-.854-.325-1.367-.488-1.538-.488-.7 0-1.257.313-1.672.939-.301.456-.452.854-.452 1.196 0 .024.004.041.012.049.358-.032.716-.049 1.074-.049 1.44 0 2.791.252 4.052.757-1.603.855-2.832 1.282-3.686 1.282-.48 0-.863-.118-1.147-.354-.195-.162-.293-.305-.293-.427 0 .058.02-.053.061-.33.024-.154-.008-.244-.098-.269-.057-.016-.188.09-.391.317-.277.317-.643.574-1.099.769-.968.415-2.437.785-4.406 1.11-2.238.367-4.492.55-6.762.55-4.134 0-6.958-.834-8.471-2.502-.439-.48-.749-.716-.928-.708-.448.017-.887.411-1.318 1.184-.39.7-.585 1.294-.585 1.782 0 .325.187.655.561.989-2.14 1.545-3.857 2.75-5.151 3.612-.342.228-.497.378-.464.452.008.023.041.036.098.036.358 0 1.166-.254 2.423-.763 1.257-.509 2.021-.889 2.289-1.142.48-.439.891-1.078 1.233-1.916.277.171.753.354 1.428.549s1.164.285 1.465.269c.203-.064.358-.338.464-.817 1.131.569 3.121.854 5.969.854 2.954 0 5.7-.261 8.239-.781 2.832-.578 4.447-1.33 4.846-2.258.496.968 1.038 1.452 1.624 1.452.415 0 1.615-.407 3.601-1.221s3.41-1.221 4.272-1.221c.667 0 1.293.081 1.879.244.065.017.256-.265.574-.842.26-.48.391-.757.391-.83 0-.016-.004-.024-.012-.024-2.183.002-3.904-.16-5.165-.486zm-15.118 7.116c-.565-.268-.885-.391-.958-.365-.26.455-.472.891-.635 1.306l-1.05-.464c-.431-.188-.683-.269-.756-.244-.082.024-.214.301-.397.83s-.262.842-.238.939c.016.065.293.223.83.471.537.248.863.372.977.372.098 0 .31-.436.635-1.306.977.545 1.554.793 1.733.744.073-.024.224-.303.452-.836s.325-.844.293-.934c-.025-.074-.32-.244-.886-.513zm-14.72 4.822c-1.176.562-1.882.943-2.118 1.147-.896.765-1.245 1.208-1.05 1.33.008.009.024.013.049.013.122-.09.614-.354 1.477-.794a180.24 180.24 0 0 1 2.93-1.416c.244-.146.488-.362.732-.646.269-.317.297-.476.085-.476-.228 0-.929.28-2.105.842zM95.494 6.238c-.375.122-.7.171-.977.146.431-.781.842-1.172 1.232-1.172.285 0 .428.143.428.427.001.245-.228.445-.683.599zm.61 17.284c0-.106.081-.251.244-.434.162-.183.293-.274.391-.274.081-.008.231.188.451.586.276.504.517.85.721 1.037-1.205-.251-1.807-.556-1.807-.915zM77.331 6.128c-.375.122-.7.171-.977.146.415-.797.826-1.196 1.233-1.196.285 0 .427.151.427.452.001.244-.227.444-.683.598zm4.663 8.935c-.13 0-.35-.053-.66-.159.041-.171.062-.322.062-.452a.74.74 0 0 0-.062-.33c.114.016.285.146.513.391.187.204.28.35.28.439a.114.114 0 0 1-.012.049c-.008.042-.048.062-.121.062zm-1.196-.231c-.448 0-.671-.085-.671-.256 0-.374.13-.562.391-.562.236 0 .354.143.354.427a1.287 1.287 0 0 1-.074.391zm2.306 7.628a3.531 3.531 0 0 1-1.916.366c-.375-.032-.562-.085-.562-.158 0-.154.838-.659 2.514-1.514-.023.211-.036.647-.036 1.306zM49.623 6.153c-.382.13-.708.183-.977.159.432-.781.842-1.172 1.233-1.172.285 0 .427.143.427.427.001.236-.227.432-.683.586zm10.705 15.05c-.358 0-.777-.135-1.257-.402a2.052 2.052 0 0 1-.5-.391c-.195-.204-.252-.367-.171-.488.057-.074.208-.102.452-.086.269.024.496.086.684.184.643.342.964.699.964 1.074-.001.072-.058.109-.172.109zM8.745 19.922c0-.105.082-.252.244-.439s.297-.289.403-.306c.073 0 .22.204.439.61.269.505.509.854.72 1.05-1.204-.252-1.806-.558-1.806-.915z">
+                        </path>
+                    </g>
+                </switch>
+            </svg>
+            <div class="basmalah_translation">In the name of God, the most merciful, the ever merciful</div>
+        </div>
+    </div>
+
+
+
+</body>
+
+
+<script>
+    const tajweedRules = {
+        'ghunnah': 'Ghunnah: nasal sound',
+        'iqlab': 'Iqlab: meem sound',
+        'qalaqah': 'Qalqalah: echo',
+        'ikhafa': 'Ikhfa: conceal noon',
+        'idgham_wo_ghunnah': 'Idgham: merge',
+        'idgham_ghunnah': 'Idgham Ghunnah: nasal merge'
+    };
+
+    async function fetchPageData(pageNumber) {
+        const response = await fetch(`https://api.quran.com/api/v4/verses/by_page/${pageNumber}?word_fields=text_uthmani_tajweed&words=true&translations=131&page=1`);
+        const data = await response.json();
+        return data.verses;
+    }
+
+    async function fetchTafsirData(pageNumber) {
+        //const response = await fetch(`https://api.qurancdn.com/api/qdc/tafsirs/en-tafisr-ibn-kathir/by_page/${pageNumber}`);
+        //const response = await fetch(`https://api.qurancdn.com/api/qdc/tafsirs/tazkirul-quran-en/by_page/${pageNumber}`);
+        const response = await fetch(`https://api.qurancdn.com/api/qdc/tafsirs/en-tafsir-maarif-ul-quran/by_page/${pageNumber}`);
+
+        const data = await response.json();
+        return data.tafsirs;
+    }
+
+    var realPageNo = 0;
+
+    function createA4Pages(fromPage, toPage, completeCallback) {
+
+        for (let i = fromPage; i <= toPage; i++) {
+            const page = document.getElementById('page_template').cloneNode(true);
+            page.id = 'page_' + i;
+            document.body.appendChild(page);
+            realPageNo++;
+
+
+            fetchPageData(i).then(verses => {
+                const versesDiv = page.querySelector('.verses');
+                const translationsDiv = page.querySelector('.translations');
+                const headingDiv = page.querySelector('.heading');
+                const print_pageNoDiv = page.querySelector('.print_pageNo');
+                const mushaf_pageNoDiv = page.querySelector('.mushaf_pageNo');
+                const surahNamesDiv = page.querySelector('.surahNames');
+                const footerDiv = page.querySelector('.footer');
+
+
+                mushaf_pageNoDiv.innerText = i;
+                print_pageNoDiv.innerText = realPageNo;
+
+                const allTajweedRulesInPage = [];
+                // even page
+                if (i % 2 === 0) {
+                    versesDiv.className += " verses_even";
+                }
+
+                var lastLineNo = 0;
+                var lineDiv = null;
+                var tr = null;
+                const surahVerses = [];
+
+                const firstVerse = verses[0];
+                var lastSurahNo = getSurahNoFromVerse(firstVerse);
+                surahVerses.push(createSurahHeading(versesDiv, translationsDiv, firstVerse, i, realPageNo, lastSurahNo));
+
+                verses.forEach(verse => {
+
+                    const current_surahNo = getSurahNoFromVerse(verse);
+                    if (current_surahNo === lastSurahNo) {
+                        currentSurah.endVerse = verse.verse_number;
+                    } else {
+                        // ----- new surah started -----
+                        lastSurahNo = current_surahNo;
+                        lastLineNo = 0;
+                        surahVerses.push(createSurahHeading(versesDiv, translationsDiv, verse, i, realPageNo, current_surahNo));
+                    }
+
+                    const oneTranslationDiv = document.createElement('div');
+                    oneTranslationDiv.className = "one-translation"
+                    // oneTranslationDiv.innerHTML = "<span class=verse_number>﴾" + verse.verse_number + "﴿</span> " + verse.translations[0].text;
+                    oneTranslationDiv.innerHTML = "<span class=verse_number>" + verse.verse_number + "</span> " + verse.translations[0].text;
+                    translationsDiv.appendChild(oneTranslationDiv);
+
+                    var wordCount = 0;
+                    verse.words.forEach(word => {
+
+                        // a new line has started
+                        if (lastLineNo !== word.line_number) {
+                            lastLineNo = word.line_number;
+                            lineDiv = document.createElement('div');
+                            lineDiv.id = page.id + '_line_' + lastLineNo;
+                            lineDiv.className = 'line';
+                            versesDiv.appendChild(lineDiv);
+
+                            const table = document.createElement('table');
+                            lineDiv.appendChild(table);
+                            tr = table.insertRow();
+                        }
+
+                        const awordDiv = document.createElement('div');
+                        awordDiv.className = `aword ${word.char_type_name}`;
+                        //lineDiv.appendChild(awordDiv);
+                        const td = tr.insertCell();
+                        td.appendChild(awordDiv);
+
+                        const arabicDiv = document.createElement('div');
+                        arabicDiv.className = 'arabic';
+                        arabicDiv.innerHTML = word.text_uthmani_tajweed;
+                        // [...arabicDiv.getElementsByTagName('rule')].forEach(rule => {
+                        //     if (rule.className === "madda_normal" && rule.innerText.indexOf('ٲ')) {
+                        //         rule.innerText = "ـٰ";
+                        //     }
+                        // });
+
+                        [...arabicDiv.getElementsByTagName('rule')].forEach(rule => {
+                            if (tajweedRules[rule.className]) {
+                                allTajweedRulesInPage.push(rule);
+                            }
+
+                            // special case for waw madda which shows as a circle
+                            if (rule.className === "slnt" && rule.innerText === "و") {
+                                if (rule.nextElementSibling.className === "madda_normal" && rule.nextElementSibling.innerText==="ٲ") {
+                                    arabicDiv.removeChild(rule.nextElementSibling);
+                                }
+                            }
+
+                        });
+
+                        // const img = document.createElement('img');
+                        // if (word.char_type_name === "word") {
+                        //     img.src=`https://static.qurancdn.com/images/w/rq-color/1/${verse.verse_number}/${word.position}.png?v=1`;
+                        //     img.alt= word.text_uthmani;
+                        // } else if (word.char_type_name === "end") {
+                        //     img.src=`https://static.qurancdn.com/images/w/common/${verse.verse_number}.png?v=1`;
+                        //     img.alt=verse.verse_key;
+                        // }
+                        // arabicDiv.appendChild(img);
+
+                        const englishDiv = document.createElement('div');
+                        englishDiv.className = 'english';
+                        if (wordCount % 2 === 0) {
+                            englishDiv.className += " english_alternate";
+                        }
+                        englishDiv.innerHTML = word.translation.text;
+
+                        awordDiv.appendChild(arabicDiv);
+
+                        awordDiv.appendChild(englishDiv);
+
+                        wordCount++;
+                    });
+                });
+
+
+                surahVerses.forEach(surahVerse => {
+                    surahNamesDiv.innerHTML += '<span>' + surahVerse.name + ":" + surahVerse.startVerse + "-" + surahVerse.endVerse + '</span>';
+                });
+
+                extractTajweedRules(allTajweedRulesInPage, footerDiv.querySelector('.tajweed_panel'));
+
+                if (i == toPage) {
+                    completeCallback();
+                }
+            });
+
+            // Add tafsir page
+            // fetchTafsirData(i).then(tafsirs => {
+            //     const tafsirPage = document.getElementById('page_template').cloneNode(true);
+            //     tafsirPage.id = 'tafsir_page_' + i;
+            //     tafsirPage.className = 'page a4-page tafsir_page';
+            //     page.parentNode.insertBefore(tafsirPage, page.nextSibling);
+
+            //     tafsirs.forEach(tafsir => {
+            //         tafsirPage.innerHTML += tafsir.text;
+            //     })
+            // });
+
+
+        }
+
+
+    }
+
+    function extractTajweedRules(rules, tajweedWrapper) {
+        const rulesDic = {};
+        [...rules].forEach(rule => {
+            const ruleName = rule.className;
+            if (tajweedRules[ruleName]) {
+                if (rulesDic[ruleName]) {
+                    if (rulesDic[ruleName].text.indexOf(rule.innerText) < 0) {
+                        rulesDic[ruleName].text += rule.innerText + " ";
+                    }
+                } else {
+                    rulesDic[ruleName] = {
+                        color: getComputedStyle(rule).color,
+                        text: rule.innerText + " "
+                    };
+                }
+            }
+        });
+
+        const templateItem = tajweedWrapper.querySelector('.tajweed_item');
+        Object.keys(rulesDic).forEach(key => {
+            const rule = rulesDic[key];
+            const newItem = templateItem.cloneNode(true);
+            tajweedWrapper.appendChild(newItem);
+
+            templateItem.querySelector('.tajweed_color').style.backgroundColor = rule.color;
+            templateItem.querySelector('.tajweed_sample').innerHTML = `<rule class=${key}>${rule.text}</rule>`;
+            templateItem.querySelector('.tajweed_meaning').innerText = tajweedRules[key];
+        });
+        tajweedWrapper.removeChild(templateItem);
+    }
+
+    function createSurahHeading(versesDiv, translationsDiv, verse, mushaf_pageNo, print_pageNo, current_surahNo) {
+        currentSurah = {
+            name: getSurahName(current_surahNo),
+            surahNo: getSurahNoFromVerse(verse),
+            startVerse: verse.verse_number,
+            endVerse: verse.verse_number
+        };
+
+        const surahInfo = getSurahInfo(current_surahNo);
+
+        if (verse.verse_number === 1) {
+            // Surah header
+            const surahheaderDiv = document.getElementById('surah_heading_template').cloneNode(true);
+            surahheaderDiv.id = 'surah_heading' + mushaf_pageNo;
+            versesDiv.appendChild(surahheaderDiv);
+            surahheaderDiv.querySelector('.surah_name').innerHTML = `<span class="arabic">${surahInfo.name_arabic}</span><span class="english">${surahInfo.name_complex}</span>`;
+            if (current_surahNo == 9)
+                surahheaderDiv.querySelector('.basmalah').style.display = "none"
+
+            // Surah name in translation
+            const surahNameInTranslation = document.createElement('div');
+            surahNameInTranslation.className = "surah_name"
+            surahNameInTranslation.innerText = surahInfo.name_simple;
+            translationsDiv.appendChild(surahNameInTranslation);
+
+            const surahDetails = document.createElement('div');
+            surahDetails.className = "surah_details";
+            surahDetails.innerText = `${surahInfo.revelation_place}, verses: ${surahInfo.verses_count}`
+            translationsDiv.appendChild(surahDetails);
+
+
+            // add the new surah in table of content
+            const toc = document.getElementById('toc');
+            const toc_template = document.getElementById('toc_heading');
+
+            const newTocEntry = toc_template.cloneNode(true);
+            newTocEntry.id = "";
+            newTocEntry.querySelector('.toc_surah_name').innerText = surahInfo.name_arabic + " " + surahInfo.name_simple;
+            newTocEntry.querySelector('.toc_mushaf_page').innerText = mushaf_pageNo;
+            newTocEntry.querySelector('.toc_print_page').innerText = print_pageNo;
+            toc.appendChild(toc_template);
+
+        }
+
+        return currentSurah;
+    }
+
+    function getSurahNoFromVerse(verse) {
+        return parseInt(verse.verse_key.split(':')[0]);
+    }
+
+    function getSurahName(number) {
+        return getSurahInfo(number).name_complex;
+    }
+
+    const json = { "chapters": [{ "id": 1, "revelation_place": "makkah", "revelation_order": 5, "bismillah_pre": false, "name_simple": "Al-Fatihah", "name_complex": "Al-Fātiĥah", "name_arabic": "الفاتحة", "verses_count": 7, "pages": [1, 1], "translated_name": { "language_name": "english", "name": "The Opener" } }, { "id": 2, "revelation_place": "madinah", "revelation_order": 87, "bismillah_pre": true, "name_simple": "Al-Baqarah", "name_complex": "Al-Baqarah", "name_arabic": "البقرة", "verses_count": 286, "pages": [2, 49], "translated_name": { "language_name": "english", "name": "The Cow" } }, { "id": 3, "revelation_place": "madinah", "revelation_order": 89, "bismillah_pre": true, "name_simple": "Ali 'Imran", "name_complex": "Āli `Imrān", "name_arabic": "آل عمران", "verses_count": 200, "pages": [50, 76], "translated_name": { "language_name": "english", "name": "Family of Imran" } }, { "id": 4, "revelation_place": "madinah", "revelation_order": 92, "bismillah_pre": true, "name_simple": "An-Nisa", "name_complex": "An-Nisā", "name_arabic": "النساء", "verses_count": 176, "pages": [77, 106], "translated_name": { "language_name": "english", "name": "The Women" } }, { "id": 5, "revelation_place": "madinah", "revelation_order": 112, "bismillah_pre": true, "name_simple": "Al-Ma'idah", "name_complex": "Al-Mā'idah", "name_arabic": "المائدة", "verses_count": 120, "pages": [106, 127], "translated_name": { "language_name": "english", "name": "The Table Spread" } }, { "id": 6, "revelation_place": "makkah", "revelation_order": 55, "bismillah_pre": true, "name_simple": "Al-An'am", "name_complex": "Al-'An`ām", "name_arabic": "الأنعام", "verses_count": 165, "pages": [128, 150], "translated_name": { "language_name": "english", "name": "The Cattle" } }, { "id": 7, "revelation_place": "makkah", "revelation_order": 39, "bismillah_pre": true, "name_simple": "Al-A'raf", "name_complex": "Al-'A`rāf", "name_arabic": "الأعراف", "verses_count": 206, "pages": [151, 176], "translated_name": { "language_name": "english", "name": "The Heights" } }, { "id": 8, "revelation_place": "madinah", "revelation_order": 88, "bismillah_pre": true, "name_simple": "Al-Anfal", "name_complex": "Al-'Anfāl", "name_arabic": "الأنفال", "verses_count": 75, "pages": [177, 186], "translated_name": { "language_name": "english", "name": "The Spoils of War" } }, { "id": 9, "revelation_place": "madinah", "revelation_order": 113, "bismillah_pre": false, "name_simple": "At-Tawbah", "name_complex": "At-Tawbah", "name_arabic": "التوبة", "verses_count": 129, "pages": [187, 207], "translated_name": { "language_name": "english", "name": "The Repentance" } }, { "id": 10, "revelation_place": "makkah", "revelation_order": 51, "bismillah_pre": true, "name_simple": "Yunus", "name_complex": "Yūnus", "name_arabic": "يونس", "verses_count": 109, "pages": [208, 221], "translated_name": { "language_name": "english", "name": "Jonah" } }, { "id": 11, "revelation_place": "makkah", "revelation_order": 52, "bismillah_pre": true, "name_simple": "Hud", "name_complex": "Hūd", "name_arabic": "هود", "verses_count": 123, "pages": [221, 235], "translated_name": { "language_name": "english", "name": "Hud" } }, { "id": 12, "revelation_place": "makkah", "revelation_order": 53, "bismillah_pre": true, "name_simple": "Yusuf", "name_complex": "Yūsuf", "name_arabic": "يوسف", "verses_count": 111, "pages": [235, 248], "translated_name": { "language_name": "english", "name": "Joseph" } }, { "id": 13, "revelation_place": "madinah", "revelation_order": 96, "bismillah_pre": true, "name_simple": "Ar-Ra'd", "name_complex": "Ar-Ra`d", "name_arabic": "الرعد", "verses_count": 43, "pages": [249, 255], "translated_name": { "language_name": "english", "name": "The Thunder" } }, { "id": 14, "revelation_place": "makkah", "revelation_order": 72, "bismillah_pre": true, "name_simple": "Ibrahim", "name_complex": "Ibrāhīm", "name_arabic": "ابراهيم", "verses_count": 52, "pages": [255, 261], "translated_name": { "language_name": "english", "name": "Abraham" } }, { "id": 15, "revelation_place": "makkah", "revelation_order": 54, "bismillah_pre": true, "name_simple": "Al-Hijr", "name_complex": "Al-Ĥijr", "name_arabic": "الحجر", "verses_count": 99, "pages": [262, 267], "translated_name": { "language_name": "english", "name": "The Rocky Tract" } }, { "id": 16, "revelation_place": "makkah", "revelation_order": 70, "bismillah_pre": true, "name_simple": "An-Nahl", "name_complex": "An-Naĥl", "name_arabic": "النحل", "verses_count": 128, "pages": [267, 281], "translated_name": { "language_name": "english", "name": "The Bee" } }, { "id": 17, "revelation_place": "makkah", "revelation_order": 50, "bismillah_pre": true, "name_simple": "Al-Isra", "name_complex": "Al-'Isrā", "name_arabic": "الإسراء", "verses_count": 111, "pages": [282, 293], "translated_name": { "language_name": "english", "name": "The Night Journey" } }, { "id": 18, "revelation_place": "makkah", "revelation_order": 69, "bismillah_pre": true, "name_simple": "Al-Kahf", "name_complex": "Al-Kahf", "name_arabic": "الكهف", "verses_count": 110, "pages": [293, 304], "translated_name": { "language_name": "english", "name": "The Cave" } }, { "id": 19, "revelation_place": "makkah", "revelation_order": 44, "bismillah_pre": true, "name_simple": "Maryam", "name_complex": "Maryam", "name_arabic": "مريم", "verses_count": 98, "pages": [305, 312], "translated_name": { "language_name": "english", "name": "Mary" } }, { "id": 20, "revelation_place": "makkah", "revelation_order": 45, "bismillah_pre": true, "name_simple": "Taha", "name_complex": "Ţāhā", "name_arabic": "طه", "verses_count": 135, "pages": [312, 321], "translated_name": { "language_name": "english", "name": "Ta-Ha" } }, { "id": 21, "revelation_place": "makkah", "revelation_order": 73, "bismillah_pre": true, "name_simple": "Al-Anbya", "name_complex": "Al-'Anbyā", "name_arabic": "الأنبياء", "verses_count": 112, "pages": [322, 331], "translated_name": { "language_name": "english", "name": "The Prophets" } }, { "id": 22, "revelation_place": "madinah", "revelation_order": 103, "bismillah_pre": true, "name_simple": "Al-Hajj", "name_complex": "Al-Ĥajj", "name_arabic": "الحج", "verses_count": 78, "pages": [332, 341], "translated_name": { "language_name": "english", "name": "The Pilgrimage" } }, { "id": 23, "revelation_place": "makkah", "revelation_order": 74, "bismillah_pre": true, "name_simple": "Al-Mu'minun", "name_complex": "Al-Mu'minūn", "name_arabic": "المؤمنون", "verses_count": 118, "pages": [342, 349], "translated_name": { "language_name": "english", "name": "The Believers" } }, { "id": 24, "revelation_place": "madinah", "revelation_order": 102, "bismillah_pre": true, "name_simple": "An-Nur", "name_complex": "An-Nūr", "name_arabic": "النور", "verses_count": 64, "pages": [350, 359], "translated_name": { "language_name": "english", "name": "The Light" } }, { "id": 25, "revelation_place": "makkah", "revelation_order": 42, "bismillah_pre": true, "name_simple": "Al-Furqan", "name_complex": "Al-Furqān", "name_arabic": "الفرقان", "verses_count": 77, "pages": [359, 366], "translated_name": { "language_name": "english", "name": "The Criterion" } }, { "id": 26, "revelation_place": "makkah", "revelation_order": 47, "bismillah_pre": true, "name_simple": "Ash-Shu'ara", "name_complex": "Ash-Shu`arā", "name_arabic": "الشعراء", "verses_count": 227, "pages": [367, 376], "translated_name": { "language_name": "english", "name": "The Poets" } }, { "id": 27, "revelation_place": "makkah", "revelation_order": 48, "bismillah_pre": true, "name_simple": "An-Naml", "name_complex": "An-Naml", "name_arabic": "النمل", "verses_count": 93, "pages": [377, 385], "translated_name": { "language_name": "english", "name": "The Ant" } }, { "id": 28, "revelation_place": "makkah", "revelation_order": 49, "bismillah_pre": true, "name_simple": "Al-Qasas", "name_complex": "Al-Qaşaş", "name_arabic": "القصص", "verses_count": 88, "pages": [385, 396], "translated_name": { "language_name": "english", "name": "The Stories" } }, { "id": 29, "revelation_place": "makkah", "revelation_order": 85, "bismillah_pre": true, "name_simple": "Al-'Ankabut", "name_complex": "Al-`Ankabūt", "name_arabic": "العنكبوت", "verses_count": 69, "pages": [396, 404], "translated_name": { "language_name": "english", "name": "The Spider" } }, { "id": 30, "revelation_place": "makkah", "revelation_order": 84, "bismillah_pre": true, "name_simple": "Ar-Rum", "name_complex": "Ar-Rūm", "name_arabic": "الروم", "verses_count": 60, "pages": [404, 410], "translated_name": { "language_name": "english", "name": "The Romans" } }, { "id": 31, "revelation_place": "makkah", "revelation_order": 57, "bismillah_pre": true, "name_simple": "Luqman", "name_complex": "Luqmān", "name_arabic": "لقمان", "verses_count": 34, "pages": [411, 414], "translated_name": { "language_name": "english", "name": "Luqman" } }, { "id": 32, "revelation_place": "makkah", "revelation_order": 75, "bismillah_pre": true, "name_simple": "As-Sajdah", "name_complex": "As-Sajdah", "name_arabic": "السجدة", "verses_count": 30, "pages": [415, 417], "translated_name": { "language_name": "english", "name": "The Prostration" } }, { "id": 33, "revelation_place": "madinah", "revelation_order": 90, "bismillah_pre": true, "name_simple": "Al-Ahzab", "name_complex": "Al-'Aĥzāb", "name_arabic": "الأحزاب", "verses_count": 73, "pages": [418, 427], "translated_name": { "language_name": "english", "name": "The Combined Forces" } }, { "id": 34, "revelation_place": "makkah", "revelation_order": 58, "bismillah_pre": true, "name_simple": "Saba", "name_complex": "Saba", "name_arabic": "سبإ", "verses_count": 54, "pages": [428, 434], "translated_name": { "language_name": "english", "name": "Sheba" } }, { "id": 35, "revelation_place": "makkah", "revelation_order": 43, "bismillah_pre": true, "name_simple": "Fatir", "name_complex": "Fāţir", "name_arabic": "فاطر", "verses_count": 45, "pages": [434, 440], "translated_name": { "language_name": "english", "name": "Originator" } }, { "id": 36, "revelation_place": "makkah", "revelation_order": 41, "bismillah_pre": true, "name_simple": "Ya-Sin", "name_complex": "Yā-Sīn", "name_arabic": "يس", "verses_count": 83, "pages": [440, 445], "translated_name": { "language_name": "english", "name": "Ya Sin" } }, { "id": 37, "revelation_place": "makkah", "revelation_order": 56, "bismillah_pre": true, "name_simple": "As-Saffat", "name_complex": "Aş-Şāffāt", "name_arabic": "الصافات", "verses_count": 182, "pages": [446, 452], "translated_name": { "language_name": "english", "name": "Those who set the Ranks" } }, { "id": 38, "revelation_place": "makkah", "revelation_order": 38, "bismillah_pre": true, "name_simple": "Sad", "name_complex": "Şād", "name_arabic": "ص", "verses_count": 88, "pages": [453, 458], "translated_name": { "language_name": "english", "name": "The Letter \"Saad\"" } }, { "id": 39, "revelation_place": "makkah", "revelation_order": 59, "bismillah_pre": true, "name_simple": "Az-Zumar", "name_complex": "Az-Zumar", "name_arabic": "الزمر", "verses_count": 75, "pages": [458, 467], "translated_name": { "language_name": "english", "name": "The Troops" } }, { "id": 40, "revelation_place": "makkah", "revelation_order": 60, "bismillah_pre": true, "name_simple": "Ghafir", "name_complex": "Ghāfir", "name_arabic": "غافر", "verses_count": 85, "pages": [467, 476], "translated_name": { "language_name": "english", "name": "The Forgiver" } }, { "id": 41, "revelation_place": "makkah", "revelation_order": 61, "bismillah_pre": true, "name_simple": "Fussilat", "name_complex": "Fuşşilat", "name_arabic": "فصلت", "verses_count": 54, "pages": [477, 482], "translated_name": { "language_name": "english", "name": "Explained in Detail" } }, { "id": 42, "revelation_place": "makkah", "revelation_order": 62, "bismillah_pre": true, "name_simple": "Ash-Shuraa", "name_complex": "Ash-Shūraá", "name_arabic": "الشورى", "verses_count": 53, "pages": [483, 489], "translated_name": { "language_name": "english", "name": "The Consultation" } }, { "id": 43, "revelation_place": "makkah", "revelation_order": 63, "bismillah_pre": true, "name_simple": "Az-Zukhruf", "name_complex": "Az-Zukhruf", "name_arabic": "الزخرف", "verses_count": 89, "pages": [489, 495], "translated_name": { "language_name": "english", "name": "The Ornaments of Gold" } }, { "id": 44, "revelation_place": "makkah", "revelation_order": 64, "bismillah_pre": true, "name_simple": "Ad-Dukhan", "name_complex": "Ad-Dukhān", "name_arabic": "الدخان", "verses_count": 59, "pages": [496, 498], "translated_name": { "language_name": "english", "name": "The Smoke" } }, { "id": 45, "revelation_place": "makkah", "revelation_order": 65, "bismillah_pre": true, "name_simple": "Al-Jathiyah", "name_complex": "Al-Jāthiyah", "name_arabic": "الجاثية", "verses_count": 37, "pages": [499, 502], "translated_name": { "language_name": "english", "name": "The Crouching" } }, { "id": 46, "revelation_place": "makkah", "revelation_order": 66, "bismillah_pre": true, "name_simple": "Al-Ahqaf", "name_complex": "Al-'Aĥqāf", "name_arabic": "الأحقاف", "verses_count": 35, "pages": [502, 506], "translated_name": { "language_name": "english", "name": "The Wind-Curved Sandhills" } }, { "id": 47, "revelation_place": "madinah", "revelation_order": 95, "bismillah_pre": true, "name_simple": "Muhammad", "name_complex": "Muĥammad", "name_arabic": "محمد", "verses_count": 38, "pages": [507, 510], "translated_name": { "language_name": "english", "name": "Muhammad" } }, { "id": 48, "revelation_place": "madinah", "revelation_order": 111, "bismillah_pre": true, "name_simple": "Al-Fath", "name_complex": "Al-Fatĥ", "name_arabic": "الفتح", "verses_count": 29, "pages": [511, 515], "translated_name": { "language_name": "english", "name": "The Victory" } }, { "id": 49, "revelation_place": "madinah", "revelation_order": 106, "bismillah_pre": true, "name_simple": "Al-Hujurat", "name_complex": "Al-Ĥujurāt", "name_arabic": "الحجرات", "verses_count": 18, "pages": [515, 517], "translated_name": { "language_name": "english", "name": "The Rooms" } }, { "id": 50, "revelation_place": "makkah", "revelation_order": 34, "bismillah_pre": true, "name_simple": "Qaf", "name_complex": "Qāf", "name_arabic": "ق", "verses_count": 45, "pages": [518, 520], "translated_name": { "language_name": "english", "name": "The Letter \"Qaf\"" } }, { "id": 51, "revelation_place": "makkah", "revelation_order": 67, "bismillah_pre": true, "name_simple": "Adh-Dhariyat", "name_complex": "Adh-Dhāriyāt", "name_arabic": "الذاريات", "verses_count": 60, "pages": [520, 523], "translated_name": { "language_name": "english", "name": "The Winnowing Winds" } }, { "id": 52, "revelation_place": "makkah", "revelation_order": 76, "bismillah_pre": true, "name_simple": "At-Tur", "name_complex": "Aţ-Ţūr", "name_arabic": "الطور", "verses_count": 49, "pages": [523, 525], "translated_name": { "language_name": "english", "name": "The Mount" } }, { "id": 53, "revelation_place": "makkah", "revelation_order": 23, "bismillah_pre": true, "name_simple": "An-Najm", "name_complex": "An-Najm", "name_arabic": "النجم", "verses_count": 62, "pages": [526, 528], "translated_name": { "language_name": "english", "name": "The Star" } }, { "id": 54, "revelation_place": "makkah", "revelation_order": 37, "bismillah_pre": true, "name_simple": "Al-Qamar", "name_complex": "Al-Qamar", "name_arabic": "القمر", "verses_count": 55, "pages": [528, 531], "translated_name": { "language_name": "english", "name": "The Moon" } }, { "id": 55, "revelation_place": "madinah", "revelation_order": 97, "bismillah_pre": true, "name_simple": "Ar-Rahman", "name_complex": "Ar-Raĥmān", "name_arabic": "الرحمن", "verses_count": 78, "pages": [531, 534], "translated_name": { "language_name": "english", "name": "The Beneficent" } }, { "id": 56, "revelation_place": "makkah", "revelation_order": 46, "bismillah_pre": true, "name_simple": "Al-Waqi'ah", "name_complex": "Al-Wāqi`ah", "name_arabic": "الواقعة", "verses_count": 96, "pages": [534, 537], "translated_name": { "language_name": "english", "name": "The Inevitable" } }, { "id": 57, "revelation_place": "madinah", "revelation_order": 94, "bismillah_pre": true, "name_simple": "Al-Hadid", "name_complex": "Al-Ĥadīd", "name_arabic": "الحديد", "verses_count": 29, "pages": [537, 541], "translated_name": { "language_name": "english", "name": "The Iron" } }, { "id": 58, "revelation_place": "madinah", "revelation_order": 105, "bismillah_pre": true, "name_simple": "Al-Mujadila", "name_complex": "Al-Mujādila", "name_arabic": "المجادلة", "verses_count": 22, "pages": [542, 545], "translated_name": { "language_name": "english", "name": "The Pleading Woman" } }, { "id": 59, "revelation_place": "madinah", "revelation_order": 101, "bismillah_pre": true, "name_simple": "Al-Hashr", "name_complex": "Al-Ĥashr", "name_arabic": "الحشر", "verses_count": 24, "pages": [545, 548], "translated_name": { "language_name": "english", "name": "The Exile" } }, { "id": 60, "revelation_place": "madinah", "revelation_order": 91, "bismillah_pre": true, "name_simple": "Al-Mumtahanah", "name_complex": "Al-Mumtaĥanah", "name_arabic": "الممتحنة", "verses_count": 13, "pages": [549, 551], "translated_name": { "language_name": "english", "name": "She that is to be examined" } }, { "id": 61, "revelation_place": "madinah", "revelation_order": 109, "bismillah_pre": true, "name_simple": "As-Saf", "name_complex": "Aş-Şaf", "name_arabic": "الصف", "verses_count": 14, "pages": [551, 552], "translated_name": { "language_name": "english", "name": "The Ranks" } }, { "id": 62, "revelation_place": "madinah", "revelation_order": 110, "bismillah_pre": true, "name_simple": "Al-Jumu'ah", "name_complex": "Al-Jumu`ah", "name_arabic": "الجمعة", "verses_count": 11, "pages": [553, 554], "translated_name": { "language_name": "english", "name": "The Congregation, Friday" } }, { "id": 63, "revelation_place": "madinah", "revelation_order": 104, "bismillah_pre": true, "name_simple": "Al-Munafiqun", "name_complex": "Al-Munāfiqūn", "name_arabic": "المنافقون", "verses_count": 11, "pages": [554, 555], "translated_name": { "language_name": "english", "name": "The Hypocrites" } }, { "id": 64, "revelation_place": "madinah", "revelation_order": 108, "bismillah_pre": true, "name_simple": "At-Taghabun", "name_complex": "At-Taghābun", "name_arabic": "التغابن", "verses_count": 18, "pages": [556, 557], "translated_name": { "language_name": "english", "name": "The Mutual Disillusion" } }, { "id": 65, "revelation_place": "madinah", "revelation_order": 99, "bismillah_pre": true, "name_simple": "At-Talaq", "name_complex": "Aţ-Ţalāq", "name_arabic": "الطلاق", "verses_count": 12, "pages": [558, 559], "translated_name": { "language_name": "english", "name": "The Divorce" } }, { "id": 66, "revelation_place": "madinah", "revelation_order": 107, "bismillah_pre": true, "name_simple": "At-Tahrim", "name_complex": "At-Taĥrīm", "name_arabic": "التحريم", "verses_count": 12, "pages": [560, 561], "translated_name": { "language_name": "english", "name": "The Prohibition" } }, { "id": 67, "revelation_place": "makkah", "revelation_order": 77, "bismillah_pre": true, "name_simple": "Al-Mulk", "name_complex": "Al-Mulk", "name_arabic": "الملك", "verses_count": 30, "pages": [562, 564], "translated_name": { "language_name": "english", "name": "The Sovereignty" } }, { "id": 68, "revelation_place": "makkah", "revelation_order": 2, "bismillah_pre": true, "name_simple": "Al-Qalam", "name_complex": "Al-Qalam", "name_arabic": "القلم", "verses_count": 52, "pages": [564, 566], "translated_name": { "language_name": "english", "name": "The Pen" } }, { "id": 69, "revelation_place": "makkah", "revelation_order": 78, "bismillah_pre": true, "name_simple": "Al-Haqqah", "name_complex": "Al-Ĥāqqah", "name_arabic": "الحاقة", "verses_count": 52, "pages": [566, 568], "translated_name": { "language_name": "english", "name": "The Reality" } }, { "id": 70, "revelation_place": "makkah", "revelation_order": 79, "bismillah_pre": true, "name_simple": "Al-Ma'arij", "name_complex": "Al-Ma`ārij", "name_arabic": "المعارج", "verses_count": 44, "pages": [568, 570], "translated_name": { "language_name": "english", "name": "The Ascending Stairways" } }, { "id": 71, "revelation_place": "makkah", "revelation_order": 71, "bismillah_pre": true, "name_simple": "Nuh", "name_complex": "Nūĥ", "name_arabic": "نوح", "verses_count": 28, "pages": [570, 571], "translated_name": { "language_name": "english", "name": "Noah" } }, { "id": 72, "revelation_place": "makkah", "revelation_order": 40, "bismillah_pre": true, "name_simple": "Al-Jinn", "name_complex": "Al-Jinn", "name_arabic": "الجن", "verses_count": 28, "pages": [572, 573], "translated_name": { "language_name": "english", "name": "The Jinn" } }, { "id": 73, "revelation_place": "makkah", "revelation_order": 3, "bismillah_pre": true, "name_simple": "Al-Muzzammil", "name_complex": "Al-Muzzammil", "name_arabic": "المزمل", "verses_count": 20, "pages": [574, 575], "translated_name": { "language_name": "english", "name": "The Enshrouded One" } }, { "id": 74, "revelation_place": "makkah", "revelation_order": 4, "bismillah_pre": true, "name_simple": "Al-Muddaththir", "name_complex": "Al-Muddaththir", "name_arabic": "المدثر", "verses_count": 56, "pages": [575, 577], "translated_name": { "language_name": "english", "name": "The Cloaked One" } }, { "id": 75, "revelation_place": "makkah", "revelation_order": 31, "bismillah_pre": true, "name_simple": "Al-Qiyamah", "name_complex": "Al-Qiyāmah", "name_arabic": "القيامة", "verses_count": 40, "pages": [577, 578], "translated_name": { "language_name": "english", "name": "The Resurrection" } }, { "id": 76, "revelation_place": "madinah", "revelation_order": 98, "bismillah_pre": true, "name_simple": "Al-Insan", "name_complex": "Al-'Insān", "name_arabic": "الانسان", "verses_count": 31, "pages": [578, 580], "translated_name": { "language_name": "english", "name": "The Man" } }, { "id": 77, "revelation_place": "makkah", "revelation_order": 33, "bismillah_pre": true, "name_simple": "Al-Mursalat", "name_complex": "Al-Mursalāt", "name_arabic": "المرسلات", "verses_count": 50, "pages": [580, 581], "translated_name": { "language_name": "english", "name": "The Emissaries" } }, { "id": 78, "revelation_place": "makkah", "revelation_order": 80, "bismillah_pre": true, "name_simple": "An-Naba", "name_complex": "An-Naba", "name_arabic": "النبإ", "verses_count": 40, "pages": [582, 583], "translated_name": { "language_name": "english", "name": "The Tidings" } }, { "id": 79, "revelation_place": "makkah", "revelation_order": 81, "bismillah_pre": true, "name_simple": "An-Nazi'at", "name_complex": "An-Nāzi`āt", "name_arabic": "النازعات", "verses_count": 46, "pages": [583, 584], "translated_name": { "language_name": "english", "name": "Those who drag forth" } }, { "id": 80, "revelation_place": "makkah", "revelation_order": 24, "bismillah_pre": true, "name_simple": "'Abasa", "name_complex": "`Abasa", "name_arabic": "عبس", "verses_count": 42, "pages": [585, 585], "translated_name": { "language_name": "english", "name": "He Frowned" } }, { "id": 81, "revelation_place": "makkah", "revelation_order": 7, "bismillah_pre": true, "name_simple": "At-Takwir", "name_complex": "At-Takwīr", "name_arabic": "التكوير", "verses_count": 29, "pages": [586, 586], "translated_name": { "language_name": "english", "name": "The Overthrowing" } }, { "id": 82, "revelation_place": "makkah", "revelation_order": 82, "bismillah_pre": true, "name_simple": "Al-Infitar", "name_complex": "Al-'Infiţār", "name_arabic": "الإنفطار", "verses_count": 19, "pages": [587, 587], "translated_name": { "language_name": "english", "name": "The Cleaving" } }, { "id": 83, "revelation_place": "makkah", "revelation_order": 86, "bismillah_pre": true, "name_simple": "Al-Mutaffifin", "name_complex": "Al-Muţaffifīn", "name_arabic": "المطففين", "verses_count": 36, "pages": [587, 589], "translated_name": { "language_name": "english", "name": "The Defrauding" } }, { "id": 84, "revelation_place": "makkah", "revelation_order": 83, "bismillah_pre": true, "name_simple": "Al-Inshiqaq", "name_complex": "Al-'Inshiqāq", "name_arabic": "الإنشقاق", "verses_count": 25, "pages": [589, 589], "translated_name": { "language_name": "english", "name": "The Sundering" } }, { "id": 85, "revelation_place": "makkah", "revelation_order": 27, "bismillah_pre": true, "name_simple": "Al-Buruj", "name_complex": "Al-Burūj", "name_arabic": "البروج", "verses_count": 22, "pages": [590, 590], "translated_name": { "language_name": "english", "name": "The Mansions of the Stars" } }, { "id": 86, "revelation_place": "makkah", "revelation_order": 36, "bismillah_pre": true, "name_simple": "At-Tariq", "name_complex": "Aţ-Ţāriq", "name_arabic": "الطارق", "verses_count": 17, "pages": [591, 591], "translated_name": { "language_name": "english", "name": "The Nightcommer" } }, { "id": 87, "revelation_place": "makkah", "revelation_order": 8, "bismillah_pre": true, "name_simple": "Al-A'la", "name_complex": "Al-'A`lá", "name_arabic": "الأعلى", "verses_count": 19, "pages": [591, 592], "translated_name": { "language_name": "english", "name": "The Most High" } }, { "id": 88, "revelation_place": "makkah", "revelation_order": 68, "bismillah_pre": true, "name_simple": "Al-Ghashiyah", "name_complex": "Al-Ghāshiyah", "name_arabic": "الغاشية", "verses_count": 26, "pages": [592, 592], "translated_name": { "language_name": "english", "name": "The Overwhelming" } }, { "id": 89, "revelation_place": "makkah", "revelation_order": 10, "bismillah_pre": true, "name_simple": "Al-Fajr", "name_complex": "Al-Fajr", "name_arabic": "الفجر", "verses_count": 30, "pages": [593, 594], "translated_name": { "language_name": "english", "name": "The Dawn" } }, { "id": 90, "revelation_place": "makkah", "revelation_order": 35, "bismillah_pre": true, "name_simple": "Al-Balad", "name_complex": "Al-Balad", "name_arabic": "البلد", "verses_count": 20, "pages": [594, 594], "translated_name": { "language_name": "english", "name": "The City" } }, { "id": 91, "revelation_place": "makkah", "revelation_order": 26, "bismillah_pre": true, "name_simple": "Ash-Shams", "name_complex": "Ash-Shams", "name_arabic": "الشمس", "verses_count": 15, "pages": [595, 595], "translated_name": { "language_name": "english", "name": "The Sun" } }, { "id": 92, "revelation_place": "makkah", "revelation_order": 9, "bismillah_pre": true, "name_simple": "Al-Layl", "name_complex": "Al-Layl", "name_arabic": "الليل", "verses_count": 21, "pages": [595, 596], "translated_name": { "language_name": "english", "name": "The Night" } }, { "id": 93, "revelation_place": "makkah", "revelation_order": 11, "bismillah_pre": true, "name_simple": "Ad-Duhaa", "name_complex": "Ađ-Đuĥaá", "name_arabic": "الضحى", "verses_count": 11, "pages": [596, 596], "translated_name": { "language_name": "english", "name": "The Morning Hours" } }, { "id": 94, "revelation_place": "makkah", "revelation_order": 12, "bismillah_pre": true, "name_simple": "Ash-Sharh", "name_complex": "Ash-Sharĥ", "name_arabic": "الشرح", "verses_count": 8, "pages": [596, 596], "translated_name": { "language_name": "english", "name": "The Relief" } }, { "id": 95, "revelation_place": "makkah", "revelation_order": 28, "bismillah_pre": true, "name_simple": "At-Tin", "name_complex": "At-Tīn", "name_arabic": "التين", "verses_count": 8, "pages": [597, 597], "translated_name": { "language_name": "english", "name": "The Fig" } }, { "id": 96, "revelation_place": "makkah", "revelation_order": 1, "bismillah_pre": true, "name_simple": "Al-'Alaq", "name_complex": "Al-`Alaq", "name_arabic": "العلق", "verses_count": 19, "pages": [597, 597], "translated_name": { "language_name": "english", "name": "The Clot" } }, { "id": 97, "revelation_place": "makkah", "revelation_order": 25, "bismillah_pre": true, "name_simple": "Al-Qadr", "name_complex": "Al-Qadr", "name_arabic": "القدر", "verses_count": 5, "pages": [598, 598], "translated_name": { "language_name": "english", "name": "The Power" } }, { "id": 98, "revelation_place": "madinah", "revelation_order": 100, "bismillah_pre": true, "name_simple": "Al-Bayyinah", "name_complex": "Al-Bayyinah", "name_arabic": "البينة", "verses_count": 8, "pages": [598, 599], "translated_name": { "language_name": "english", "name": "The Clear Proof" } }, { "id": 99, "revelation_place": "madinah", "revelation_order": 93, "bismillah_pre": true, "name_simple": "Az-Zalzalah", "name_complex": "Az-Zalzalah", "name_arabic": "الزلزلة", "verses_count": 8, "pages": [599, 599], "translated_name": { "language_name": "english", "name": "The Earthquake" } }, { "id": 100, "revelation_place": "makkah", "revelation_order": 14, "bismillah_pre": true, "name_simple": "Al-'Adiyat", "name_complex": "Al-`Ādiyāt", "name_arabic": "العاديات", "verses_count": 11, "pages": [599, 600], "translated_name": { "language_name": "english", "name": "The Courser" } }, { "id": 101, "revelation_place": "makkah", "revelation_order": 30, "bismillah_pre": true, "name_simple": "Al-Qari'ah", "name_complex": "Al-Qāri`ah", "name_arabic": "القارعة", "verses_count": 11, "pages": [600, 600], "translated_name": { "language_name": "english", "name": "The Calamity" } }, { "id": 102, "revelation_place": "makkah", "revelation_order": 16, "bismillah_pre": true, "name_simple": "At-Takathur", "name_complex": "At-Takāthur", "name_arabic": "التكاثر", "verses_count": 8, "pages": [600, 600], "translated_name": { "language_name": "english", "name": "The Rivalry in world increase" } }, { "id": 103, "revelation_place": "makkah", "revelation_order": 13, "bismillah_pre": true, "name_simple": "Al-'Asr", "name_complex": "Al-`Aşr", "name_arabic": "العصر", "verses_count": 3, "pages": [601, 601], "translated_name": { "language_name": "english", "name": "The Declining Day" } }, { "id": 104, "revelation_place": "makkah", "revelation_order": 32, "bismillah_pre": true, "name_simple": "Al-Humazah", "name_complex": "Al-Humazah", "name_arabic": "الهمزة", "verses_count": 9, "pages": [601, 601], "translated_name": { "language_name": "english", "name": "The Traducer" } }, { "id": 105, "revelation_place": "makkah", "revelation_order": 19, "bismillah_pre": true, "name_simple": "Al-Fil", "name_complex": "Al-Fīl", "name_arabic": "الفيل", "verses_count": 5, "pages": [601, 601], "translated_name": { "language_name": "english", "name": "The Elephant" } }, { "id": 106, "revelation_place": "makkah", "revelation_order": 29, "bismillah_pre": true, "name_simple": "Quraysh", "name_complex": "Quraysh", "name_arabic": "قريش", "verses_count": 4, "pages": [602, 602], "translated_name": { "language_name": "english", "name": "Quraysh" } }, { "id": 107, "revelation_place": "makkah", "revelation_order": 17, "bismillah_pre": true, "name_simple": "Al-Ma'un", "name_complex": "Al-Mā`ūn", "name_arabic": "الماعون", "verses_count": 7, "pages": [602, 602], "translated_name": { "language_name": "english", "name": "The Small kindnesses" } }, { "id": 108, "revelation_place": "makkah", "revelation_order": 15, "bismillah_pre": true, "name_simple": "Al-Kawthar", "name_complex": "Al-Kawthar", "name_arabic": "الكوثر", "verses_count": 3, "pages": [602, 602], "translated_name": { "language_name": "english", "name": "The Abundance" } }, { "id": 109, "revelation_place": "makkah", "revelation_order": 18, "bismillah_pre": true, "name_simple": "Al-Kafirun", "name_complex": "Al-Kāfirūn", "name_arabic": "الكافرون", "verses_count": 6, "pages": [603, 603], "translated_name": { "language_name": "english", "name": "The Disbelievers" } }, { "id": 110, "revelation_place": "madinah", "revelation_order": 114, "bismillah_pre": true, "name_simple": "An-Nasr", "name_complex": "An-Naşr", "name_arabic": "النصر", "verses_count": 3, "pages": [603, 603], "translated_name": { "language_name": "english", "name": "The Divine Support" } }, { "id": 111, "revelation_place": "makkah", "revelation_order": 6, "bismillah_pre": true, "name_simple": "Al-Masad", "name_complex": "Al-Masad", "name_arabic": "المسد", "verses_count": 5, "pages": [603, 603], "translated_name": { "language_name": "english", "name": "The Palm Fiber" } }, { "id": 112, "revelation_place": "makkah", "revelation_order": 22, "bismillah_pre": true, "name_simple": "Al-Ikhlas", "name_complex": "Al-'Ikhlāş", "name_arabic": "الإخلاص", "verses_count": 4, "pages": [604, 604], "translated_name": { "language_name": "english", "name": "The Sincerity" } }, { "id": 113, "revelation_place": "makkah", "revelation_order": 20, "bismillah_pre": true, "name_simple": "Al-Falaq", "name_complex": "Al-Falaq", "name_arabic": "الفلق", "verses_count": 5, "pages": [604, 604], "translated_name": { "language_name": "english", "name": "The Daybreak" } }, { "id": 114, "revelation_place": "makkah", "revelation_order": 21, "bismillah_pre": true, "name_simple": "An-Nas", "name_complex": "An-Nās", "name_arabic": "الناس", "verses_count": 6, "pages": [604, 604], "translated_name": { "language_name": "english", "name": "Mankind" } }] }
+
+    function getSurahInfo(number) {
+        const chapters = json.chapters;
+        return chapters.find(chapter => chapter.id == number);
+        //return chapters[number];
+    }
+
+    (function myLoop(from, to) {
+        setTimeout(function () {
+
+            createA4Pages(from, from, function () {
+
+                // check if any page has overflows
+                const page_list = document.querySelectorAll('.page'); // returns NodeList
+                const page_array = [...page_list]; // converts NodeList to Array
+                page_array.forEach(page => {
+                    if (page.id === "page_template")
+                        return;
+
+                    const header = page.querySelector('.heading');
+                    const footer = page.querySelector('.footer');
+
+                    // check if verses overflow the page
+                    const verses = page.querySelector('.verses');
+                    const translations = page.querySelector('.translations');
+
+                    const pageViewAreaHeight = getInnerHeight(page)
+                        - header.offsetHeight
+                        - footer.offsetHeight
+                        - 10;
+
+                    const versesGap = verses.offsetHeight - pageViewAreaHeight;
+                    console.log(`page inner height: ${pageViewAreaHeight}, verses.offsetHeight: ${verses.offsetHeight} versesGap: ${versesGap}`);
+
+                    if (versesGap > 0) {
+                        const ratio = (1 - (versesGap / pageViewAreaHeight));
+                        verses.style.transform = `scale(1, ${ratio})`;
+                        verses.style.top = `-${versesGap / 2}px`;
+                    }
+
+                    // check if translations overflow the page
+                    const translationsGap = translations.offsetHeight - pageViewAreaHeight;
+                    console.log(`page inner height: ${pageViewAreaHeight}, translations.offsetHeight: ${translations.offsetHeight} translationsGap: ${translationsGap}`);
+                    if (translationsGap > 0) {
+                        const ratio = (1 - (translationsGap / pageViewAreaHeight));
+                        //translations.className += " translations_condensed";
+                        const computedStyle = getComputedStyle(translations);
+                        translations.style.fontSize = Math.max(8, parseFloat(computedStyle.fontSize) * ratio) + 'px';
+                        //translations.style.top = `-${translationsGap/2}px`;
+                    }
+
+
+                    // ensure each surah names appear
+                    const translation_surahnames = [...(translations.querySelectorAll('.surah_name'))];
+                    const verses_surahnames = [...(verses.querySelectorAll('.surah_heading'))];
+                    if (translation_surahnames.length !== verses_surahnames.length) {
+                        console.log(`Mismatch in surah names and surah headings. Page id:${page.id}, Translations: ${translation_surahnames.length}, Verses: ${verses_surahnames.length}`)
+                    }
+
+                    const line_divs = page.querySelectorAll('.line');
+                    const line_array = [...line_divs];
+                    line_divs.forEach(line => {
+                        const table = line.getElementsByTagName('table')[0];
+                        if (table.offsetWidth > line.clientWidth) {
+                            line.className += " line_condensed";
+                            if (table.clientWidth > line.clientWidth) {
+                                console.log('Line overflow at page' + page.id + ' and line ' + line.id);
+                            }
+                        }
+                    })
+                });
+            });
+
+            if (from <= to) {
+                myLoop(++from, to);
+            } else {
+                document.getElementById('page_template').style.display = "none";
+                document.getElementById('surah_heading_template').style.display = "none";
+            }
+        }, 1000);
+
+    })(590, 600);
+
+
+
+    // main method
+    function getInnerHeight(elm) {
+        var computed = getComputedStyle(elm),
+            padding = parseInt(computed.paddingTop) + parseInt(computed.paddingBottom);
+
+        return elm.clientHeight - padding
+    }
+
+    // demo utility function
+    function printInnerHeight(selector) {
+        console.clear()
+        console.log(
+            getInnerHeight(document.querySelector(selector))
+        )
+    }
+</script>
+
+</html>

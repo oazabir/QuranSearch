@@ -1,0 +1,113 @@
+rule {
+    cursor: pointer;
+}
+
+rule.ham_wasl,
+rule.slnt,
+rule.laam_shamsiyah {
+    color: #aaaaaa;
+}
+
+rule.ham_wasl:hover,
+rule.slnt:hover,
+rule.laam_shamsiyah:hover {
+    background-color: #d7d7d7;
+}
+
+rule.madda_normal {
+    color: #537fff;
+}
+
+rule.madda_permissible {
+    color: #4050ff;
+}
+
+rule.madda_necessary {
+    color: #000ebc;
+}
+
+rule.madda_obligatory {
+    color: #2144c1;
+}
+
+rule.qalaqah {
+    color: #dd0008;
+}
+
+rule.qalaqah:hover {
+    background-color: #f3a6a9;
+    color: #dd0008;
+}
+
+rule.ikhafa_shafawi {
+    color: #d500b7;
+}
+
+rule.ikhafa_shafawi:hover {
+    background-color: #f0a6e6;
+    color: #d500b7;
+}
+
+rule.ikhafa {
+    color: #9400a8;
+}
+
+rule.ikhafa:hover {
+    background-color: #daa6e1;
+    color: #9400a8;
+}
+
+rule.iqlab {
+    color: #26bffd;
+}
+
+rule.iqlab:hover {
+    background-color: #92e5ff;
+    color: #0099c5;
+}
+
+rule.idgham_shafawi {
+    color: #58b800;
+}
+
+rule.idgham_shafawi:hover {
+    background-color: #bae890;
+    color: #58b800;
+}
+
+rule.idgham_ghunnah {
+    color: #169200;
+}
+
+rule.idgham_ghunnah:hover {
+    background-color: #9ce58e;
+    color: #169200;
+}
+
+rule.idgham_wo_ghunnah {
+    color: #169200;
+}
+
+rule.idgham_wo_ghunnah:hover {
+    background-color: #9ce58e;
+    color: #169200;
+}
+
+rule.idgham_mutajanisayn,
+rule.idgham_mutaqaribayn {
+    color: #a1a1a1;
+}
+
+rule.idgham_mutajanisayn:hover,
+rule.idgham_mutaqaribayn:hover {
+    background-color: #d7d7d7;
+}
+
+rule.ghunnah {
+    color: #ff7e1e;
+}
+
+rule.ghunnah:hover {
+    background-color: #ff7e1e;
+    color: black;
+}
