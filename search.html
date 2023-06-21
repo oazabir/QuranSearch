@@ -203,6 +203,10 @@
             border: solid 1px gray;
         }
 
+        .search_example code {
+            cursor: pointer;
+        }
+
     </style>
     <script type="text/javascript"
         src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
@@ -213,7 +217,7 @@
     <h1>Quran Search</h1>
     <div id="search_area">
         <input type="text" id="search-input" placeholder="e.g. ان ... هو" />
-        <label><input type="checkbox" id="search-order" value="Reverse" checked="true" />Reverse</label>
+        <label><input type="checkbox" id="search-order" value="Reverse" checked="true" />Last to first</label>
         <label><input type="checkbox" id="search-fuzzy" value="Fuzzy" checked="true" />Fuzzy</label>
         <label><input type="checkbox" id="search-uthmani" value="Reverse" />Uthmani</label>
         <label><input type="checkbox" id="search-exact" value="Reverse" />Exact</label>
@@ -224,15 +228,15 @@
 
     </div>
     <div id="query-examples">
-        <p>Example search queries</p>
+        <p>Example search queries. Click on the arabic to try the search:</p>
         <p>
-        <ul>
-            <li><code class="rtl">ان</code> - Match any word having ان anywhere inside is e.g. انسان، إنه</li>
-            <li><code class="rtl">spaceأنspace</code> - Match أن as separate word</li>
-            <li><code class="rtl">ان ... هو</code> - Match ان/أن/إن followed by a space and three letter word and space
-                and then هو</li>
-            <li><code class="rtl">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...</li>
-            <li><code class="rtl">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ ...</li>
+        <ul class="examples">
+            <li class="search_example"><code class="rtl" title="السما">السما</code> - Match any word having السما anywhere inside it. e.g. ٱلسَّمَآءِ ,ٱلسَّمَـٰوَٰتِ</li>
+            <li class="search_example"><code class="rtl" title=" أن ">spaceأنspace</code> - Match أن as separate word</li>
+            <li class="search_example"><code class="rtl" title="ان ... هو">ان ... هو</code> - Match ان/أن/إن followed by a space and three letter word and space
+                class="search_example" and then هو</li>
+            <li class="search_example"><code class="rtl" title="صلات">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...</li>
+            <li class="search_example"><code class="rtl" title="صلوة">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ ...</li>
             <li></li>
             <li></li>
         </ul>
@@ -258,6 +262,10 @@
         const doSearch = _.debounce(() => search(searchInput.value), 500, false);
         searchInput.addEventListener('input', doSearch);
         [...document.getElementsByTagName('input')].forEach(e => e.addEventListener('change', doSearch));
+        [...document.getElementsByClassName('search_example')].forEach(e => e.addEventListener('click', function(event){
+            searchInput.value = event.srcElement.title;
+            doSearch();
+        }))
 
         function search(query) {
             const reverse = document.getElementById('search-order').checked;
