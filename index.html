@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research Website</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333333;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 36px;
+      font-weight: 500;
+      margin-top: 0;
+    }
+
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .tools {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+
+    .tool {
+      flex-basis: 48%;
+      background-color: #ffffff;
+      border-radius: 4px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .tool:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .tool h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .tool p {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .tool a {
+      display: inline-block;
+      background-color: #4a90e2;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+
+    .tool a:hover {
+      background-color: #256fb5;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .tools {
+        flex-wrap: wrap;
+      }
+
+      .tool {
+        flex-basis: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Research Website</h1>
+    <p>Welcome to our research website. We offer two powerful tools for Quran analysis:</p>
+    <div class="tools">
+      <div class="tool">
+        <h2>Quran Mushaf Generator</h2>
+        <p>Create your own personalized Quran Mushaf with ease.</p>
+        <a href="quran.html">Go to Quran Mushaf Generator</a>
+      </div>
+      <div class="tool">
+        <h2>Quran Search Tool</h2>
+        <p>Search for specific verses or keywords in the Quran.</p>
+        <a href="search.html">Go to Quran Search Tool</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
