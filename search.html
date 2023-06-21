@@ -237,8 +237,7 @@
                 class="search_example" and then هو</li>
             <li class="search_example"><code class="rtl" title="صلات">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...</li>
             <li class="search_example"><code class="rtl" title="صلوة">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ ...</li>
-            <li></li>
-            <li></li>
+
         </ul>
         </p>
     </div>
@@ -267,7 +266,17 @@
             doSearch();
         }))
 
+        window.onhashchange = function() {
+            const hash = decodeURI(window.location.hash).replace('#','');
+            if (hash !== searchInput.value) {
+                searchInput.value = hash;
+                doSearch();
+
+            }
+        }
+
         function search(query) {
+            window.location.hash = query;
             const reverse = document.getElementById('search-order').checked;
             const searchQuery = query;
             var searchQueryExplanation = "Search using ";
