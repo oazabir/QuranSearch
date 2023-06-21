@@ -217,11 +217,11 @@
     <h1>Quran Search</h1>
     <div id="search_area">
         <input type="text" id="search-input" placeholder="e.g. ان ... هو" />
-        <label><input type="checkbox" id="search-order" value="Reverse" checked="true" />Last to first</label>
-        <label><input type="checkbox" id="search-fuzzy" value="Fuzzy" checked="true" />Fuzzy</label>
-        <label><input type="checkbox" id="search-uthmani" value="Reverse" />Uthmani</label>
-        <label><input type="checkbox" id="search-exact" value="Reverse" />Exact</label>
-        <label><input disabled="disabled" type="checkbox" id="search-regex" value="Regex" />Regex</label>
+        <label title="Search the Quran backward, from last to first. Useful for finding matches in Juz Amma"><input type="checkbox" id="search-order" value="Reverse" checked="true"  />Last to first</label>
+        <label title="Fuzzy match variants of alif, ya, waw, etc" ><input type="checkbox" id="search-fuzzy" value="Fuzzy" checked="true" />Fuzzy</label>
+        <label title="Precisely match the Uthmani script only"><input type="checkbox" id="search-uthmani" value="Reverse" />Uthmani</label>
+        <label title="Do exact match, no fuzzy stuff"><input type="checkbox" id="search-exact" value="Reverse" />Exact</label>
+        <label title="Shows if search query is a valid regex"><input disabled="disabled" type="checkbox" id="search-regex" value="Regex" />Regex</label>
         <p id="search-query-explanation"></p>
     </div>
     <div id="autocomplete-container" class="autocomplete-items">
