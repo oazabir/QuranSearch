@@ -232,12 +232,13 @@
         <p>
         <ul class="examples">
             <li class="search_example"><code class="rtl" title="السما">السما</code> - Match any word having السما anywhere inside it. e.g. ٱلسَّمَآءِ ,ٱلسَّمَـٰوَٰتِ</li>
+            <li class="search_example"><code class="rtl" title="سخر+أرض">سخر+أرض</code> - Match ْverses having سخر followed by أرض e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ</li>
+            <li class="search_example"><code class="rtl" title="سخر+(أرض;سماء)">سخر+(أرض;سماء)</code> - Match ْverses having سخر followed by أرض or مساء e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ and ٱلْمُسَخَّرِ بَيْنَ ٱلسَّمَآءِ</li>
             <li class="search_example"><code class="rtl" title=" أن ">spaceأنspace</code> - Match أن as separate word</li>
             <li class="search_example"><code class="rtl" title="ان ... هو">ان ... هو</code> - Match ان/أن/إن followed by a space and three letter word and space
                 class="search_example" and then هو</li>
             <li class="search_example"><code class="rtl" title="صلات">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...</li>
             <li class="search_example"><code class="rtl" title="صلوة">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ ...</li>
-
         </ul>
         </p>
     </div>
@@ -249,7 +250,8 @@
         const tashkeel = "\u0617-\u061A\u064B-\u0652\u0640\u0670\u0653\u06E5\u06E2\u0651\u0670";
         const mainArabicCharacters = "\u0621-\u064A\u0660-\u0669\u0671-\u06D5"
         const additionalArabicCharacters = "\u0615-\u061E\u064B-\u0660\u0640\u06D4-\u06ED\u0670";
-        const regExArabicLettersOnly = new RegExp("[^\\s" + additionalArabicCharacters + "]", "gi");
+        const specialSearchCharacters = "\\s\+;\(\)"
+        const regExArabicLettersOnly = new RegExp("[^" + specialSearchCharacters + additionalArabicCharacters + "]", "gi");
 
         const regexChars = "\.\+\*\?\^\$\(\)\[\]\{\}\|\\";
 
@@ -285,9 +287,10 @@
 
             const isFuzzy = document.getElementById('search-fuzzy').checked;
             const isExact = document.getElementById('search-exact').checked;
-            const isRegex = validateRegex(searchQuery);
-            if (isRegex) {
+            //const isRegex = validateRegex(improveSearchQuery(searchQuery, isFuzzy));
+            //if (isRegex) {
                 const regexQuery = isExact ? searchQuery : improveSearchQuery(searchQuery, isFuzzy);
+                console.log(regexQuery)
                 try {
                     searchQueryAsRegex = new RegExp(regexQuery, "g");
                     searchQueryExplanation += "Regex = <code class='rtl'>" + searchQueryAsRegex.toString() + "</code>";
@@ -295,10 +298,10 @@
                     searchQueryAsRegex = null;
                     searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
                 }
-            } else {
-                searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
-            }
-            document.getElementById('search-regex').checked = isRegex;
+            // } else {
+            //     searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
+            // }
+            //document.getElementById('search-regex').checked = isRegex;
 
             const searchList = reverse ? reversedVerses : verses;
 
@@ -333,7 +336,8 @@
                     .replace(/ي/g, "[يىﻯﻰ]")
                     .replace(/ /g, "[ ]")
             }
-            //query = query.replace("+", ".*?");
+            query = query.replace(/([^\(\)]*);([^\(\)]*)/g, "($1)|($2)");
+            query = query.replace(/\+/g, ".*?");
             return query;
         }
 
