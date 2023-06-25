@@ -8,6 +8,115 @@
 
 
     <style>
+        /* Reset default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Set a base font and background color */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        h1,
+        h2,
+        h3 {
+            margin-top: 0.5em;
+            line-height: 1.5em;
+            text-shadow: 0 1px #fff;
+            color: #905;
+            margin-bottom: 0.5em;
+        }
+
+        /* Center the page content */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            /* padding: 20px; */
+        }
+
+        /* Style the search bar */
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Style the search options */
+        .search-options {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-options label {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+
+        /* Style the result section */
+        .result-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-section h2 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            .search-bar button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .search-options label {
+                font-size: 12px;
+            }
+
+            .result-section {
+                padding: 10px;
+            }
+
+            .result-section h2 {
+                font-size: 16px;
+            }
+        }
+
+
+
         .hafssmart {
             font-family: "hafssmart8"
         }
@@ -106,12 +215,13 @@
 
         #search-input {
             padding: 8px;
+            direction: rtl;
             font-size: 20pt;
             border: 1px solid #ccc;
-            border-radius: 4px;
-            width: 300px;
+            border-radius: 20px;
             margin-right: 10px;
             font-variant-ligatures: no-common-ligatures;
+            font-family: 'Arabic Typesetting';
         }
 
         #search-order,
@@ -125,6 +235,7 @@
             margin-top: 10px;
             font-size: 10px;
             color: #666;
+            line-height: 1.5em;
         }
 
         #autocomplete-container {
@@ -134,7 +245,7 @@
         }
 
         .highlight {
-            background-color: yellow;
+            background-color: #CDEB8B;
             font-weight: bold;
         }
 
@@ -194,6 +305,7 @@
             border-bottom: solid 1px #666;
         }
 
+
         li {
             line-height: 1.5em;
         }
@@ -205,6 +317,41 @@
 
         .search_example code {
             cursor: pointer;
+            text-shadow: 0 1px #fff;
+            color: #905;
+            font-family: arabic;
+            line-height: 1.8em;
+        }
+
+
+        .clearable-input-container {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+        }
+
+        .clearable-input-container input[type="text"] {
+            padding-right: 30px !important;
+            /* Add space for the cross icon */
+        }
+
+        .clearable-input-container .clear-icon {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .clearable-input-container .clear-icon:before {
+            content: '\2715';
+            /* Unicode character for the cross symbol */
+            font-size: 14px;
+            color: #999;
+        }
+
+        .clearable-input-container .clear-icon:hover:before {
+            color: #666;
         }
 
     </style>
@@ -214,210 +361,281 @@
 </head>
 
 <body>
-    <h1>Quran Search</h1>
-    <div id="search_area">
-        <input type="text" id="search-input" placeholder="e.g. ان ... هو" />
-        <label title="Search the Quran backward, from last to first. Useful for finding matches in Juz Amma"><input type="checkbox" id="search-order" value="Reverse" checked="true"  />Last to first</label>
-        <label title="Fuzzy match variants of alif, ya, waw, etc" ><input type="checkbox" id="search-fuzzy" value="Fuzzy" checked="true" />Fuzzy</label>
-        <label title="Precisely match the Uthmani script only"><input type="checkbox" id="search-uthmani" value="Reverse" />Uthmani</label>
-        <label title="Do exact match, no fuzzy stuff"><input type="checkbox" id="search-exact" value="Reverse" />Exact</label>
-        <label title="Shows if search query is a valid regex"><input disabled="disabled" type="checkbox" id="search-regex" value="Regex" />Regex</label>
+    <div class="container">
+        <h1>Quran Search</h1>
+
+        <div id="search_area" class="search-bar">
+            <div class="clearable-input-container">
+                <input type="text" id="search-input" placeholder="e.g. ان ... هو" />
+                <span class="clear-icon"></span>
+            </div>
+
+        </div>
+
+        <div class="search-options">
+            <label title="Search the Quran backward, from last to first. Useful for finding matches in Juz Amma"><input
+                    type="checkbox" id="search-order" value="Reverse" checked="true" />Last to first</label>
+            <label title="Fuzzy match variants of alif, ya, waw, etc"><input type="checkbox" id="search-fuzzy"
+                    value="Fuzzy" checked="true" />Fuzzy</label>
+            <label title="Precisely match the Uthmani script only"><input type="checkbox" id="search-uthmani"
+                    value="Reverse" />Uthmani</label>
+            <label title="Do exact match, no fuzzy stuff"><input type="checkbox" id="search-exact"
+                    value="Reverse" />Exact</label>
+        </div>
         <p id="search-query-explanation"></p>
+        <h2>Results</h2>
+        <div id="autocomplete-container" class="autocomplete-items result-section">
+
+        </div>
+        <h2>Examples</h2>
+        <div id="query-examples" class="result-section">
+            <p>Example search queries. Click on the arabic to try the search:</p>
+            <p>
+            <ul class="examples">
+                <li class="search_example"><code class="rtl" title="السما">السما</code> - Match any word having السما
+                    anywhere inside it. e.g. ٱلسَّمَآءِ ,ٱلسَّمَـٰوَٰتِ</li>
+                <li class="search_example"><code class="rtl" title="سخر+أرض">سخر+أرض</code> - Match ْverses having سخر
+                    followed by أرض e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ</li>
+                <li class="search_example"><code class="rtl" title="سخر+(أرض;سماء)">سخر+(أرض;سماء)</code> - Match
+                    ْverses having سخر followed by أرض or مساء e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ and ٱلْمُسَخَّرِ
+                    بَيْنَ ٱلسَّمَآءِ</li>
+                <li class="search_example"><code class="rtl" title=" أن ">spaceأنspace</code> - Match أن as separate
+                    word</li>
+                <li class="search_example"><code class="rtl" title="ان ... هو">ان ... هو</code> - Match ان/أن/إن
+                    followed by a space and three letter word and space
+                    class="search_example" and then هو</li>
+                <li class="search_example"><code class="rtl" title="صلات">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...
+                </li>
+                <li class="search_example"><code class="rtl" title="صلوة">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ
+                    ...</li>
+            </ul>
+            </p>
+        </div>
     </div>
-    <div id="autocomplete-container" class="autocomplete-items">
-
-    </div>
-    <div id="query-examples">
-        <p>Example search queries. Click on the arabic to try the search:</p>
-        <p>
-        <ul class="examples">
-            <li class="search_example"><code class="rtl" title="السما">السما</code> - Match any word having السما anywhere inside it. e.g. ٱلسَّمَآءِ ,ٱلسَّمَـٰوَٰتِ</li>
-            <li class="search_example"><code class="rtl" title="سخر+أرض">سخر+أرض</code> - Match ْverses having سخر followed by أرض e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ</li>
-            <li class="search_example"><code class="rtl" title="سخر+(أرض;سماء)">سخر+(أرض;سماء)</code> - Match ْverses having سخر followed by أرض or مساء e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ and ٱلْمُسَخَّرِ بَيْنَ ٱلسَّمَآءِ</li>
-            <li class="search_example"><code class="rtl" title=" أن ">spaceأنspace</code> - Match أن as separate word</li>
-            <li class="search_example"><code class="rtl" title="ان ... هو">ان ... هو</code> - Match ان/أن/إن followed by a space and three letter word and space
-                class="search_example" and then هو</li>
-            <li class="search_example"><code class="rtl" title="صلات">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...</li>
-            <li class="search_example"><code class="rtl" title="صلوة">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ ...</li>
-        </ul>
-        </p>
-    </div>
-
-    <script>
-        const autocompleteContainer = document.getElementById('autocomplete-container');
-        const searchResultsContainer = document.getElementById('search-results');
-
-        const tashkeel = "\u0617-\u061A\u064B-\u0652\u0640\u0670\u0653\u06E5\u06E2\u0651\u0670";
-        const mainArabicCharacters = "\u0621-\u064A\u0660-\u0669\u0671-\u06D5"
-        const additionalArabicCharacters = "\u0615-\u061E\u064B-\u0660\u0640\u06D4-\u06ED\u0670";
-        const specialSearchCharacters = "\\s\+;\(\)"
-        const regExArabicLettersOnly = new RegExp("[^" + specialSearchCharacters + additionalArabicCharacters + "]", "gi");
-
-        const regexChars = "\.\+\*\?\^\$\(\)\[\]\{\}\|\\";
 
 
-        const verses = Object.values(quran);
-        const reversedVerses = verses.toReversed();
-
-        const searchInput = document.getElementById('search-input');
-        const doSearch = _.debounce(() => search(searchInput.value), 500, false);
-        searchInput.addEventListener('input', doSearch);
-        [...document.getElementsByTagName('input')].forEach(e => e.addEventListener('change', doSearch));
-        [...document.getElementsByClassName('search_example')].forEach(e => e.addEventListener('click', function(event){
-            searchInput.value = event.srcElement.title;
-            doSearch();
-        }))
-
-        window.onhashchange = function() {
-            const hash = decodeURI(window.location.hash).replace('#','');
-            if (hash !== searchInput.value) {
-                searchInput.value = hash;
-                doSearch();
-
-            }
-        }
-
-        function search(query) {
-            window.location.hash = query;
-            const reverse = document.getElementById('search-order').checked;
-            const searchQuery = query;
-            var searchQueryExplanation = "Search using ";
-
-            var searchQueryAsRegex = null;
-
-            const isFuzzy = document.getElementById('search-fuzzy').checked;
-            const isExact = document.getElementById('search-exact').checked;
-            //const isRegex = validateRegex(improveSearchQuery(searchQuery, isFuzzy));
-            //if (isRegex) {
-                const regexQuery = isExact ? searchQuery : improveSearchQuery(searchQuery, isFuzzy);
-                console.log(regexQuery)
-                try {
-                    searchQueryAsRegex = new RegExp(regexQuery, "g");
-                    searchQueryExplanation += "Regex = <code class='rtl'>" + searchQueryAsRegex.toString() + "</code>";
-                } catch (e) {
-                    searchQueryAsRegex = null;
-                    searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
-                }
-            // } else {
-            //     searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
-            // }
-            //document.getElementById('search-regex').checked = isRegex;
-
-            const searchList = reverse ? reversedVerses : verses;
-
-            if (isExact) searchQueryExplanation += " exact match ";
-            if (reverse) searchQueryExplanation += " verses in reverse order ";
-
-            const isUthmani = document.getElementById('search-uthmani').checked;
-            searchQueryExplanation += isUthmani ? " matching uthmani script only " : " matching simple or uthmani scipt ";
-
-            if (searchQuery.length > 1) {
-                const matchingVerses = searchList.filter(v =>
-                    isUthmani ?
-                        matchText(v.uthmani, searchQuery, searchQueryAsRegex)
-                        : matchText(v.simple, searchQuery, searchQueryAsRegex)
-                        || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
-
-                showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex);
-            } else {
-                showAutocomplete([]);
-            }
-
-            document.getElementById('search-query-explanation').innerHTML = searchQueryExplanation;
-        }
-
-        function improveSearchQuery(query, isFuzzy) {
-            //query = regExReplace(query, non_tashkeel, "$&[" + additionalArabicCharacters + "]{0,2}");
-            query = query.replace(regExArabicLettersOnly, "$&[" + additionalArabicCharacters + "]{0,2}");
-            if (isFuzzy) {
-                query = query.replace(/ة/g, "[ةﺓﺔت]")
-                    .replace(/[ا]/g, "[أاآإٱ]")
-                    .replace(/و/g, "[وؤٶٷ]")
-                    .replace(/ي/g, "[يىﻯﻰ]")
-                    .replace(/ /g, "[ ]")
-            }
-            query = query.replace(/([^\(\)]*);([^\(\)]*)/g, "($1)|($2)");
-            query = query.replace(/\+/g, ".*?");
-            return query;
-        }
-
-        function regExReplace(inputString, regexPattern, replacement) {
-            let replacedString = "";
-            let match;
-            let startIndex = 0;
-
-            while ((match = regexPattern.exec(inputString)) !== null) {
-                const matchIndex = match.index;
-                const theMatch = match[0];
-                const matchLength = theMatch.length;
-
-                replacedString +=
-                    inputString.substring(startIndex, matchIndex) +
-                    replacement.replace("$&", theMatch);
-
-                startIndex += matchLength;
-            }
-
-            replacedString += inputString.substring(startIndex);
-
-            return replacedString;
-        }
-
-        function matchText(verse, searchQuery, searchQueryAsRegex) {
-            return (searchQueryAsRegex && searchQueryAsRegex.test(verse)) || verse.indexOf(searchQuery) > -1;
-        }
-
-        function validateRegex(pattern) {
-            var parts = pattern.split('/'),
-                regex = pattern,
-                options = "";
-            if (parts.length > 1) {
-                regex = parts[1];
-                options = parts[2];
-            }
-            try {
-                new RegExp(regex, options);
-                return true;
-            }
-            catch (e) {
-                return false;
-            }
-        }
-
-        function showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex) {
-            autocompleteContainer.innerHTML = `<div class="result_count">Results ${matchingVerses.length}</div>`;
-
-            matchingVerses.forEach(function (verse) {
-                const verseItem = document.createElement('div');
-                verseItem.innerHTML = `
-                 <p class="ayah_link"><a target="_blank" href="https://quran.com/${verse.chapter}/${verse.verse}">(${verse.chapter}:${verse.verse})</a></p>
-                 <p class="uthmani hafs">${showMatches(verse.uthmani, searchQuery, searchQueryAsRegex)}</p>
-                 <p class="translation">${verse.translation}</p>
-                 <p class="simple">${showMatches(verse.simple, searchQuery, searchQueryAsRegex)}</p>`;
-                autocompleteContainer.appendChild(verseItem);
-            });
-        }
-
-        function showMatches(verse, searchQuery, searchQueryAsRegex) {
-            if (searchQueryAsRegex) {
-                return highlightMatches(verse, searchQueryAsRegex);
-            } else {
-                return highlightMatches(verse, searchQuery);
-            }
-        }
-
-        function highlightMatches(inputString, regexPattern) {
-            // Create a new regular expression object
-            var regex = new RegExp(regexPattern, 'gi');
-
-            // Replace the matches with HTML span tags for highlighting
-            var highlightedString = inputString.replace(regex, '<span class="highlight">$&</span>');
-
-            // Return the highlighted string
-            return highlightedString;
-        }
-
-    </script>
 </body>
+
+
+
+<script>
+    const autocompleteContainer = document.getElementById('autocomplete-container');
+    const searchResultsContainer = document.getElementById('search-results');
+
+    const tashkeel = "\u0617-\u061A\u064B-\u0652\u0640\u0670\u0653\u06E5\u06E2\u0651\u0670";
+    const mainArabicCharacters = "\u0621-\u064A\u0660-\u0669\u0671-\u06D5"
+    const additionalArabicCharacters = "\u0615-\u061E\u064B-\u0660\u0640\u06D4-\u06ED\u0670";
+    const specialSearchCharacters = "\\s\+;؛\(\)"
+    const regExArabicLettersOnly = new RegExp("[^" + specialSearchCharacters + additionalArabicCharacters + "]", "gi");
+
+    const regexChars = "\.\+\*\?\^\$\(\)\[\]\{\}\|\\";
+
+
+    const verses = Object.values(quran);
+    const reversedVerses = verses.toReversed();
+
+    const searchInput = document.getElementById('search-input');
+    const doSearch = _.debounce(() => search(searchInput.value), 500, false);
+    searchInput.addEventListener('input', doSearch);
+    [...document.getElementsByTagName('input')].forEach(e => e.addEventListener('change', doSearch));
+    [...document.getElementsByClassName('search_example')].forEach(e => e.addEventListener('click', function (event) {
+        searchInput.value = event.srcElement.title;
+        doSearch();
+    }))
+
+    async function asyncFor(iters, callback) {
+        for (let i = 0; i < iters; i++) {
+            const promise = new Promise((resolve, _reject) => {
+                setTimeout(() => {
+                    callback();
+                    resolve();
+                }, 0);
+            });
+            await promise;
+        }
+    }
+
+    window.addEventListener('hashchange', function () {
+        const hash = decodeURI(window.location.hash).replace('#', '');
+        if (hash !== searchInput.value) {
+            searchInput.value = hash;
+            doSearch();
+
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var clearIcons = document.getElementsByClassName('clear-icon');
+
+        Array.prototype.forEach.call(clearIcons, function (icon) {
+            icon.addEventListener('click', function () {
+                var input = this.previousElementSibling;
+                if (input && input.tagName === 'INPUT') {
+                    clearSearch();
+                }
+            });
+        });
+    });
+
+    window.addEventListener("keyup", (e) => { if (e.key === "Escape") clearSearch() });
+
+    function clearSearch() {
+        searchInput.value = "";
+        doSearch();
+        _.delay(() => searchInput.focus());
+    }
+
+    function search(query) {
+        window.location.hash = query;
+        const reverse = document.getElementById('search-order').checked;
+        const searchQuery = query;
+        var searchQueryExplanation = "Search using ";
+
+        var searchQueryAsRegex = null;
+
+        const isFuzzy = document.getElementById('search-fuzzy').checked;
+        const isExact = document.getElementById('search-exact').checked;
+        //const isRegex = validateRegex(improveSearchQuery(searchQuery, isFuzzy));
+        //if (isRegex) {
+        const regexQuery = isExact ? searchQuery : improveSearchQuery(searchQuery, isFuzzy);
+        console.log(regexQuery)
+        try {
+            searchQueryAsRegex = new RegExp(regexQuery, "g");
+            searchQueryExplanation += "Regex = <code class='rtl'>" + searchQueryAsRegex.toString() + "</code>";
+        } catch (e) {
+            searchQueryAsRegex = null;
+            searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
+        }
+        // } else {
+        //     searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
+        // }
+        //document.getElementById('search-regex').checked = isRegex;
+
+        const searchList = reverse ? reversedVerses : verses;
+
+        if (isExact) searchQueryExplanation += " exact match ";
+        if (reverse) searchQueryExplanation += " verses in reverse order ";
+
+        const isUthmani = document.getElementById('search-uthmani').checked;
+        searchQueryExplanation += isUthmani ? " matching uthmani script only " : " matching simple or uthmani scipt ";
+
+        if (searchQuery.length > 1) {
+            const matchingVerses = searchList.filter(v =>
+                isUthmani ?
+                    matchText(v.uthmani, searchQuery, searchQueryAsRegex)
+                    : matchText(v.simple, searchQuery, searchQueryAsRegex)
+                    || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
+
+            showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex);
+        } else {
+            showAutocomplete([]);
+        }
+
+        document.getElementById('search-query-explanation').innerHTML = searchQueryExplanation;
+    }
+
+    function regExReplace(inputString, regexPattern, replacement) {
+        let replacedString = "";
+        let match;
+        let startIndex = 0;
+
+        while ((match = regexPattern.exec(inputString)) !== null) {
+            const matchIndex = match.index;
+            const theMatch = match[0];
+            const matchLength = theMatch.length;
+
+            replacedString +=
+                inputString.substring(startIndex, matchIndex) +
+                replacement.replace("$&", theMatch);
+
+            startIndex += matchLength;
+        }
+
+        replacedString += inputString.substring(startIndex);
+
+        return replacedString;
+    }
+
+    function matchText(verse, searchQuery, searchQueryAsRegex) {
+        return (searchQueryAsRegex && searchQueryAsRegex.test(verse)) || verse.indexOf(searchQuery) > -1;
+    }
+
+    function validateRegex(pattern) {
+        var parts = pattern.split('/'),
+            regex = pattern,
+            options = "";
+        if (parts.length > 1) {
+            regex = parts[1];
+            options = parts[2];
+        }
+        try {
+            new RegExp(regex, options);
+            return true;
+        }
+        catch (e) {
+            return false;
+        }
+    }
+
+    function showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex) {
+        autocompleteContainer.innerHTML = `<div class="result_count">Matching verses: ${matchingVerses.length}</div>`;
+
+        matchingVerses.forEach(function (verse) {
+            const verseItem = document.createElement('div');
+            verseItem.innerHTML = `
+             <p class="ayah_link"><a target="_blank" href="https://quran.com/${verse.chapter}/${verse.verse}">(${verse.chapter}:${verse.verse})</a></p>
+             <p class="uthmani hafs">${showMatches(verse.uthmani, searchQuery, searchQueryAsRegex)}</p>
+             <p class="translation">${verse.translation}</p>
+             <p class="simple">${showMatches(verse.simple, searchQuery, searchQueryAsRegex)}</p>`;
+            autocompleteContainer.appendChild(verseItem);
+        });
+    }
+
+    function showMatches(verse, searchQuery, searchQueryAsRegex) {
+        if (searchQueryAsRegex) {
+            return highlightMatches(verse, searchQueryAsRegex);
+        } else {
+            return highlightMatches(verse, searchQuery);
+        }
+    }
+
+    function highlightMatches(inputString, regexPattern) {
+        // Create a new regular expression object
+        var regex = new RegExp(regexPattern, 'gi');
+
+        // Replace the matches with HTML span tags for highlighting
+        var highlightedString = inputString.replace(regex, '<span class="highlight">$&</span>');
+
+        // Return the highlighted string
+        return highlightedString;
+    }
+
+    function improveSearchQuery(query, isFuzzy) {
+        //query = regExReplace(query, non_tashkeel, "$&[" + additionalArabicCharacters + "]{0,2}");
+        query = query.replace(regExArabicLettersOnly, "$&[" + additionalArabicCharacters + "]{0,2}");
+        if (isFuzzy) {
+            query = query.replace(/ة/g, "[ةﺓﺔت]")
+                .replace(/[ا]/g, "[أاآإٱ]")
+                .replace(/و/g, "[وؤٶٷ]")
+                .replace(/ي/g, "[يىﻯﻰ]")
+                .replace(/ /g, "[ ]")
+        }
+        query = query.replace(/([^\(\)]+)[؛;]([^\(\)]+)/g, "($1)|($2)");
+        query = query.replace(/\+/g, ".*?");
+        return query;
+    }
+
+    _.delay(() => searchInput.focus());
+
+</script>
+
+<!-- YAMLI CODE START -->
+<script type="text/javascript" src="https://api.yamli.com/js/yamli_api.js"></script>
+<script type="text/javascript">
+    if (typeof (Yamli) == "object" && Yamli.init({ uiLanguage: "ar", startMode: "onOrUserDefault" })) {
+        Yamli.yamlify("", { settingsPlacement: "bottomLeft" });
+    }
+</script>
+<!-- YAMLI CODE END -->
 
 </html>
