@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <title>Quran Search</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/thetruetruth/quran-data-kfgqpc@main/css/kfgqpc.font.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/css/index.css">
 
 
     <style>
@@ -369,10 +370,12 @@
                 <input type="text" id="search-input" placeholder="e.g. ان ... هو" />
                 <span class="clear-icon"></span>
             </div>
-
         </div>
+        <div id="keyboard" class="simple-keyboard" style="display:none"></div>
 
         <div class="search-options">
+            <label title="Show on screen arabic keyboard"><input type="checkbox" id="keyboard-visibility"
+                value="Arabic Keyboard" />Show Arabic Keyboard</label>
             <label title="Search the Quran backward, from last to first. Useful for finding matches in Juz Amma"><input
                     type="checkbox" id="search-order" value="Reverse" checked="true" />Last to first</label>
             <label title="Fuzzy match variants of alif, ya, waw, etc"><input type="checkbox" id="search-fuzzy"
@@ -381,6 +384,7 @@
                     value="Reverse" />Uthmani</label>
             <label title="Do exact match, no fuzzy stuff"><input type="checkbox" id="search-exact"
                     value="Reverse" />Exact</label>
+
         </div>
         <p id="search-query-explanation"></p>
         <h2>Results</h2>
@@ -434,10 +438,16 @@
     const verses = Object.values(quran);
     const reversedVerses = verses.toReversed();
 
+    const keyboardShow = document.getElementById('keyboard-visibility');
+    const keyboard = document.getElementById('keyboard');
     const searchInput = document.getElementById('search-input');
+
+    keyboardShow.addEventListener('change', () => {
+        keyboard.style.display = keyboardShow.checked ? "" : "none";
+    });
     const doSearch = _.debounce(() => search(searchInput.value), 500, false);
     searchInput.addEventListener('input', doSearch);
-    [...document.getElementsByTagName('input')].forEach(e => e.addEventListener('change', doSearch));
+    [...document.getElementsByTagName('input')].filter(e => e.type === "checkbox").forEach(e => e.addEventListener('change', doSearch));
     [...document.getElementsByClassName('search_example')].forEach(e => e.addEventListener('click', function (event) {
         searchInput.value = event.srcElement.title;
         doSearch();
@@ -495,10 +505,7 @@
 
         const isFuzzy = document.getElementById('search-fuzzy').checked;
         const isExact = document.getElementById('search-exact').checked;
-        //const isRegex = validateRegex(improveSearchQuery(searchQuery, isFuzzy));
-        //if (isRegex) {
         const regexQuery = isExact ? searchQuery : improveSearchQuery(searchQuery, isFuzzy);
-        console.log(regexQuery)
         try {
             searchQueryAsRegex = new RegExp(regexQuery, "g");
             searchQueryExplanation += "Regex = <code class='rtl'>" + searchQueryAsRegex.toString() + "</code>";
@@ -506,10 +513,6 @@
             searchQueryAsRegex = null;
             searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
         }
-        // } else {
-        //     searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
-        // }
-        //document.getElementById('search-regex').checked = isRegex;
 
         const searchList = reverse ? reversedVerses : verses;
 
@@ -520,6 +523,9 @@
         searchQueryExplanation += isUthmani ? " matching uthmani script only " : " matching simple or uthmani scipt ";
 
         if (searchQuery.length > 1) {
+
+
+            asyncFor(searchList,)
             const matchingVerses = searchList.filter(v =>
                 isUthmani ?
                     matchText(v.uthmani, searchQuery, searchQueryAsRegex)
@@ -629,13 +635,26 @@
 
 </script>
 
-<!-- YAMLI CODE START -->
-<script type="text/javascript" src="https://api.yamli.com/js/yamli_api.js"></script>
-<script type="text/javascript">
-    if (typeof (Yamli) == "object" && Yamli.init({ uiLanguage: "ar", startMode: "onOrUserDefault" })) {
-        Yamli.yamlify("", { settingsPlacement: "bottomLeft" });
+<script src="https://cdn.jsdelivr.net/npm/simple-keyboard@latest/build/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simple-keyboard-layouts@latest/build/index.min.js"></script>
+<script>
+    const Keyboard = window.SimpleKeyboard.default;
+    const KeyboardLayouts = window.SimpleKeyboardLayouts.default;
+
+    const layout = new KeyboardLayouts().get("arabic");
+    const myKeyboard = new Keyboard({
+        onChange: input => onChange(input),
+        onKeyPress: button => onKeyPress(button),
+        ...layout
+    });
+
+    function onChange(input) {
+        searchInput.value = input;
+        doSearch();
+    }
+
+    function onKeyPress(button) {
     }
 </script>
-<!-- YAMLI CODE END -->
 
 </html>
