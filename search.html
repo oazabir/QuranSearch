@@ -375,7 +375,7 @@
 
         <div class="search-options">
             <label title="Show on screen arabic keyboard"><input type="checkbox" id="keyboard-visibility"
-                value="Arabic Keyboard" />Show Arabic Keyboard</label>
+                    value="Arabic Keyboard" />Show Arabic Keyboard</label>
             <label title="Search the Quran backward, from last to first. Useful for finding matches in Juz Amma"><input
                     type="checkbox" id="search-order" value="Reverse" checked="true" />Last to first</label>
             <label title="Fuzzy match variants of alif, ya, waw, etc"><input type="checkbox" id="search-fuzzy"
@@ -388,6 +388,7 @@
         </div>
         <p id="search-query-explanation"></p>
         <h2>Results</h2>
+        <div id="progress"></div>
         <div id="autocomplete-container" class="autocomplete-items result-section">
 
         </div>
@@ -441,10 +442,13 @@
     const keyboardShow = document.getElementById('keyboard-visibility');
     const keyboard = document.getElementById('keyboard');
     const searchInput = document.getElementById('search-input');
+    const progress = document.getElementById('progress');
 
     keyboardShow.addEventListener('change', () => {
         keyboard.style.display = keyboardShow.checked ? "" : "none";
     });
+    window.addEventListener("keyup", (e) => e.key === "Escape" && clearSearch());
+
     const doSearch = _.debounce(() => search(searchInput.value), 500, false);
     searchInput.addEventListener('input', doSearch);
     [...document.getElementsByTagName('input')].filter(e => e.type === "checkbox").forEach(e => e.addEventListener('change', doSearch));
@@ -453,11 +457,11 @@
         doSearch();
     }))
 
-    async function asyncFor(iters, callback) {
-        for (let i = 0; i < iters; i++) {
+    async function asyncFor(length, batchSize, callback) {
+        for (let i = 0; i < length; i += batchSize) {
             const promise = new Promise((resolve, _reject) => {
                 setTimeout(() => {
-                    callback();
+                    callback(i);
                     resolve();
                 }, 0);
             });
@@ -487,13 +491,32 @@
         });
     });
 
-    window.addEventListener("keyup", (e) => { if (e.key === "Escape") clearSearch() });
-
     function clearSearch() {
         searchInput.value = "";
         doSearch();
         _.delay(() => searchInput.focus());
     }
+
+    function getProgressBar(numerator, denominator) {
+        const percentage = Math.round((numerator / denominator) * 100);
+        const tenths = Math.round(percentage / 10);
+
+        const barTenths = [
+            '⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️',
+            '🟦⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️',
+            '🟦🟦⬜️⬜️⬜️⬜️⬜️⬜️⬜️⬜️',
+            '🟦🟦🟦⬜️⬜️⬜️⬜️⬜️⬜️⬜️',
+            '🟦🟦🟦🟦⬜️⬜️⬜️⬜️⬜️⬜️',
+            '🟦🟦🟦🟦🟦⬜️⬜️⬜️⬜️⬜️',
+            '🟦🟦🟦🟦🟦🟦⬜️⬜️⬜️⬜️',
+            '🟦🟦🟦🟦🟦🟦🟦⬜️⬜️⬜️',
+            '🟦🟦🟦🟦🟦🟦🟦🟦⬜️⬜️',
+            '🟦🟦🟦🟦🟦🟦🟦🟦🟦️⬜️',
+            '🟩🟩🟩🟩🟩🟩🟩🟩🟩🟩',
+        ];
+
+        return barTenths[tenths];
+    };
 
     function search(query) {
         window.location.hash = query;
@@ -523,16 +546,20 @@
         searchQueryExplanation += isUthmani ? " matching uthmani script only " : " matching simple or uthmani scipt ";
 
         if (searchQuery.length > 1) {
+            autocompleteContainer.innerHTML = "";
+            const batchSize = 100;
+            asyncFor(searchList.length, batchSize, (i) => {
+                const items = searchList.slice(i, Math.min(searchList.length, i + batchSize));
+                const matchingVerses = items.filter(v =>
+                    isUthmani ?
+                        matchText(v.uthmani, searchQuery, searchQueryAsRegex)
+                        : matchText(v.simple, searchQuery, searchQueryAsRegex)
+                        || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
 
-
-            asyncFor(searchList,)
-            const matchingVerses = searchList.filter(v =>
-                isUthmani ?
-                    matchText(v.uthmani, searchQuery, searchQueryAsRegex)
-                    : matchText(v.simple, searchQuery, searchQueryAsRegex)
-                    || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
-
-            showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex);
+                showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex, true);
+                progress.innerText = getProgressBar(i, searchList.length);
+                if (i+batchSize>= searchList.length) progress.innerText="";
+            });
         } else {
             showAutocomplete([]);
         }
@@ -581,13 +608,26 @@
         catch (e) {
             return false;
         }
+
+
     }
 
-    function showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex) {
-        autocompleteContainer.innerHTML = `<div class="result_count">Matching verses: ${matchingVerses.length}</div>`;
+    function showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex, appendResult) {
+        if (appendResult) {
+            const totalVerses = autocompleteContainer.getElementsByClassName('result_item').length + matchingVerses.length;
+            const resultCountDiv = autocompleteContainer.getElementsByClassName('result_count')[0];
+            if (resultCountDiv)
+                resultCountDiv.innerText = `Matching verses: ${totalVerses}`;
+            else
+                autocompleteContainer.innerHTML = `<div class="result_count">Matching verses: ${matchingVerses.length}</div>`;
+        } else {
+            autocompleteContainer.innerHTML = `<div class="result_count">Matching verses: ${matchingVerses.length}</div>`;
+        }
+
 
         matchingVerses.forEach(function (verse) {
             const verseItem = document.createElement('div');
+            verseItem.className = "result_item";
             verseItem.innerHTML = `
              <p class="ayah_link"><a target="_blank" href="https://quran.com/${verse.chapter}/${verse.verse}">(${verse.chapter}:${verse.verse})</a></p>
              <p class="uthmani hafs">${showMatches(verse.uthmani, searchQuery, searchQueryAsRegex)}</p>
