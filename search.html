@@ -266,7 +266,7 @@
 
         .autocomplete-items a {
             font-weight: bold;
-            color: #000;
+            color: dimgray;
             text-decoration: none;
             margin-right: 10px;
         }
@@ -360,24 +360,24 @@
             color: #666;
         }
 
-        .result_item a {
-            opacity: 0.5;
+        .result_item a.icon {
+            visibility: hidden;
         }
-        .result_item a:hover {
-            opacity: 1;
+        .result_item:hover a.icon {
+            visibility: visible;
         }
 
         .copy_button:before {
             content: "📋"
         }
 
-        .copy_button {
+        .result_item .copy_button {
             cursor: pointer;
             font-size: 10pt;
-            opacity: 0.3;
+            visibility: hidden;
         }
-        .copy_button:hover {
-            opacity: 1;
+        .result_item:hover .copy_button {
+            visibility: visible;
         }
 
     </style>
@@ -711,7 +711,7 @@
             const verseItem = document.createElement('div');
             verseItem.className = "result_item";
             verseItem.innerHTML = `
-             <p class="ayah_link">${verse.surah} <a target="_blank" title="Go to quran.com" href="https://quran.com/${verse.chapter}/${verse.verse}">(${verse.chapter}:${verse.verse}) 📖</a><a target="_blank" title="Go to tafsir.app" href="https://tafsir.app/${verse.chapter}/${verse.verse}">📚</a></p>
+             <p class="ayah_link">${verse.surah} <a target="_blank" title="Go to quran.com" href="https://quran.com/${verse.chapter}/${verse.verse}">(${verse.chapter}:${verse.verse})</a><a class="icon" target="_blank" title="Go to tafsir.app" href="https://tafsir.app/${verse.chapter}/${verse.verse}">📚</a></p>
              <p class="uthmani hafs">${showMatches(verse.uthmani, searchQuery, searchQueryAsRegex)} <span class="copy_button"></span></p>
              <p class="translation">${verse.translation} <span class="copy_button"></span></p>
              <p class="simple">${showMatches(verse.simple, searchQuery, searchQueryAsRegex)} <span class="copy_button"></span></p>`;
