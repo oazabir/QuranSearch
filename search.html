@@ -387,7 +387,7 @@
 
         <div id="search_area" class="search-bar">
             <div class="clearable-input-container">
-                <input type="text" id="search-input" placeholder="e.g. ان ... هو" />
+                <input type="text" id="search-input" placeholder="enter an Arabic or English search query" />
                 <span class="clear-icon"></span>
             </div>
         </div>
@@ -414,7 +414,7 @@
         </div>
         <h2>Examples</h2>
         <div id="query-examples" class="result-section">
-            <p>Example search queries. Click on the arabic to try the search:</p>
+            <p>Click to try the search:</h3>
             <p>
             <ul class="examples">
                 <li class="search_example"><code class="rtl" title="السما">السما</code> - Match any word having السما
@@ -432,7 +432,7 @@
                 <li class="search_example"><code class="rtl" title="صلات">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...
                 </li>
                 <li class="search_example"><code class="rtl" title="صلوة">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ
-                    ...</li>
+                <li class="search_example"><code class="ltr" title="earth OR sky">earth OR sky</code> - Match verses containing earth or sky</li>
             </ul>
             </p>
         </div>
@@ -496,7 +496,6 @@
         if (hash !== searchInput.value) {
             searchInput.value = hash;
             doSearch();
-
         }
     });
 
@@ -543,6 +542,7 @@
     function search(query) {
         const reverse = document.getElementById('search-order').checked;
         const searchQuery = query;
+        window.location.hash = query;
         var searchQueryExplanation = "Search using ";
 
         var searchQueryAsRegex = null;
@@ -594,7 +594,7 @@
 
                 makeCopyButtonClickable();
 
-                window.location.hash = query;
+
 
             });
         } else {
