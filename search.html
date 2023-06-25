@@ -355,6 +355,13 @@
             color: #666;
         }
 
+        .result_item a {
+            opacity: 0.5;
+        }
+        .result_item a:hover {
+            opacity: 1;
+        }
+
         .copy_button:before {
             content: "📋"
         }
@@ -362,6 +369,10 @@
         .copy_button {
             cursor: pointer;
             font-size: 10pt;
+            opacity: 0.3;
+        }
+        .copy_button:hover {
+            opacity: 1;
         }
 
     </style>
@@ -530,7 +541,6 @@
     };
 
     function search(query) {
-        window.location.hash = query;
         const reverse = document.getElementById('search-order').checked;
         const searchQuery = query;
         var searchQueryExplanation = "Search using ";
@@ -539,13 +549,22 @@
 
         const isFuzzy = document.getElementById('search-fuzzy').checked;
         const isExact = document.getElementById('search-exact').checked;
-        const regexQuery = isExact ? searchQuery : improveSearchQuery(searchQuery, isFuzzy);
-        try {
-            searchQueryAsRegex = new RegExp(regexQuery, "g");
+
+        const isEnglishSearch = searchQuery.match(/[a-zA-Z]/g);
+        searchInput.style.direction = isEnglishSearch ? "ltr" : "rtl";
+
+        if (isEnglishSearch) {
+            searchQueryAsRegex = convertEnglishSearchQueryToRegex(searchQuery);
             searchQueryExplanation += "Regex = <code class='rtl'>" + searchQueryAsRegex.toString() + "</code>";
-        } catch (e) {
-            searchQueryAsRegex = null;
-            searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
+        } else {
+            const regexQuery = isExact ? searchQuery : improveSearchQuery(searchQuery, isFuzzy);
+            try {
+                searchQueryAsRegex = new RegExp(regexQuery, "g");
+                searchQueryExplanation += "Regex = <code class='rtl'>" + searchQueryAsRegex.toString() + "</code>";
+            } catch (e) {
+                searchQueryAsRegex = null;
+                searchQueryExplanation += "Text = <code class='rtl'>" + searchQuery + "</code>";
+            }
         }
 
         const searchList = reverse ? reversedVerses : verses;
@@ -562,10 +581,11 @@
             asyncFor(searchList.length, batchSize, (i) => {
                 const items = searchList.slice(i, Math.min(searchList.length, i + batchSize));
                 const matchingVerses = items.filter(v =>
-                    isUthmani ?
-                        matchText(v.uthmani, searchQuery, searchQueryAsRegex)
-                        : matchText(v.simple, searchQuery, searchQueryAsRegex)
-                        || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
+                    isEnglishSearch ? matchText(v.translation, searchQuery, searchQueryAsRegex) :
+                        isUthmani ?
+                            matchText(v.uthmani, searchQuery, searchQueryAsRegex)
+                            : matchText(v.simple, searchQuery, searchQueryAsRegex)
+                            || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
 
                 showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex, true);
                 progress.innerText = getProgressBar(i, searchList.length);
@@ -573,6 +593,9 @@
                 progress.innerText = "";
 
                 makeCopyButtonClickable();
+
+                window.location.hash = query;
+
             });
         } else {
             showAutocomplete([]);
@@ -581,6 +604,30 @@
         document.getElementById('search-query-explanation').innerHTML = searchQueryExplanation;
 
     }
+
+    function convertEnglishSearchQueryToRegex(searchQuery) {
+        // Escape special characters used in regular expressions
+        const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        // Replace "AND" with whitespace
+        let regex = escapedQuery.replace(/\bAND\b/gi, ' ');
+
+        // Replace "OR" with "|"
+        regex = regex.replace(/\bOR\b/gi, '|');
+
+        // Replace "NOT" with negative lookahead
+        regex = regex.replace(/\bNOT\b/gi, '(?!.*\\b)');
+
+        // Convert parentheses to groups
+        regex = regex.replace(/[(]/g, '(?:');
+        regex = regex.replace(/[)]/g, ')?');
+
+        // Wrap the regular expression with boundaries
+        regex = `\\b${regex}\\b`;
+
+        return new RegExp(regex, 'i');
+    }
+
 
     function makeCopyButtonClickable() {
         [...document.getElementsByClassName('copy_button')].forEach(e => e.addEventListener('click', (e) => {
