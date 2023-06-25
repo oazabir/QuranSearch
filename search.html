@@ -629,7 +629,7 @@
             const verseItem = document.createElement('div');
             verseItem.className = "result_item";
             verseItem.innerHTML = `
-             <p class="ayah_link"><a target="_blank" href="https://quran.com/${verse.chapter}/${verse.verse}">(${verse.chapter}:${verse.verse})</a></p>
+             <p class="ayah_link">${verse.surah} <a target="_blank" href="https://quran.com/${verse.chapter}/${verse.verse}">(${verse.chapter}:${verse.verse})</a></p>
              <p class="uthmani hafs">${showMatches(verse.uthmani, searchQuery, searchQueryAsRegex)}</p>
              <p class="translation">${verse.translation}</p>
              <p class="simple">${showMatches(verse.simple, searchQuery, searchQueryAsRegex)}</p>`;
