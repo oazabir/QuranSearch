@@ -11,6 +11,8 @@ with open("quran-simple-min.txt","r") as f:
     simple_text = f.readlines();
 with open("uthmani.txt","r") as f:
     uthmani_text = f.readlines();
+with open("surah.json","r") as f:
+    surah_json = json.load(f)
 
 translation_dict = {}
 
@@ -31,6 +33,13 @@ for line in uthmani_text:
 
 output = {}
 
+surah_names = {}
+for s in surah_json:
+    id = str(s["id"])
+    name = s["transliteration"]
+    print(id)
+    surah_names[id] = name
+
 for line in simple_text:
     splits = line.split("|")
     if len(splits) > 2:
@@ -41,6 +50,7 @@ for line in simple_text:
         translation = translation_dict[key(chapterNo, verseNo)]
         output[key(chapterNo, verseNo)] = {
             "chapter": chapterNo,
+            "surah": surah_names[chapterNo],
             "verse": verseNo,
             "simple": arabic,
             "uthmani": uthmani_dict[key(chapterNo, verseNo)],
