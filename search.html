@@ -363,6 +363,7 @@
         .result_item a.icon {
             visibility: hidden;
         }
+
         .result_item:hover a.icon {
             visibility: visible;
         }
@@ -376,6 +377,7 @@
             font-size: 10pt;
             visibility: hidden;
         }
+
         .result_item:hover .copy_button {
             visibility: visible;
         }
@@ -426,7 +428,7 @@
                 <li class="search_example"><code class="rtl" title="سخر+أرض">سخر+أرض</code> - Match ْverses having سخر
                     followed by أرض e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ</li>
                 <li class="search_example"><code class="rtl" title="سخر+(أرض;سماء)">سخر+(أرض;سماء)</code> - Match
-                    ْverses having سخر followed by أرض or مساء e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ and ٱلْمُسَخَّرِ
+                    ْverses having سخر followed by أرض or سماء e.g. سَخَّرَ لَكُم مَّا فِى ٱلْأَرْضِ and ٱلْمُسَخَّرِ
                     بَيْنَ ٱلسَّمَآءِ</li>
                 <li class="search_example"><code class="rtl" title=" أن ">spaceأنspace</code> - Match أن as separate
                     word</li>
@@ -436,7 +438,8 @@
                 <li class="search_example"><code class="rtl" title="صلات">صلات</code> - Match صَلَاتِهِمْ، صَلَاتِى، ...
                 </li>
                 <li class="search_example"><code class="rtl" title="صلوة">صلوة</code> - Match صَلَاتِهِمْ،ٱلصَّلَوٰةَ
-                <li class="search_example"><code class="ltr" title="earth OR sky">earth OR sky</code> - Match verses containing earth or sky</li>
+                <li class="search_example"><code class="ltr" title="earth OR sky">earth OR sky</code> - Match verses
+                    containing earth or sky</li>
             </ul>
             </p>
         </div>
@@ -473,7 +476,7 @@
     });
     window.addEventListener("keyup", (e) => e.key === "Escape" && clearSearch());
 
-    const doSearch = _.debounce(() => search(searchInput.value), 500, false);
+    const doSearch = _.debounce(async () => await search(searchInput.value), 500, false);
     searchInput.addEventListener('input', doSearch);
     [...document.getElementsByTagName('input')].filter(e => e.type === "checkbox").forEach(e => e.addEventListener('change', doSearch));
     [...document.getElementsByClassName('search_example')].forEach(e => e.addEventListener('click', function (event) {
@@ -481,14 +484,27 @@
         doSearch();
     }))
 
-    async function asyncFor(length, batchSize, callback, complete) {
+    async function asyncFor(length, batchSize, abortSignal, callback, complete) {
         for (let i = 0; i < length; i += batchSize) {
-            const promise = new Promise((resolve, _reject) => {
-                setTimeout(() => {
+            const promise = new Promise((resolve, reject) => {
+                const error = new DOMException('Calculation aborted by the user', 'AbortError'); // 1
+
+                if (abortSignal.aborted) { // 2
+                    return reject(error);
+                }
+
+                const timeout = setTimeout(() => {
                     callback(i);
                     resolve();
                 }, 0);
+
+                abortSignal.addEventListener('abort', () => {
+                    clearTimeout(timeout);
+                    reject(error);
+                });
+
             });
+
             await promise;
         }
 
@@ -543,7 +559,9 @@
         return barTenths[tenths];
     };
 
-    function search(query) {
+    let abortController = null;
+
+    async function search(query) {
         const reverse = document.getElementById('search-order').checked;
         const searchQuery = query;
         window.location.hash = query;
@@ -580,27 +598,39 @@
         searchQueryExplanation += isUthmani ? " matching uthmani script only " : " matching simple or uthmani scipt ";
 
         if (searchQuery.length > 1) {
-            autocompleteContainer.innerHTML = "";
+            clearAutoComplete();
+
+            // if an in-progress search is going on, abort it
+            if (abortController) {
+                abortController.abort();
+                abortController = null;
+            }
+
             const batchSize = 100;
-            asyncFor(searchList.length, batchSize, (i) => {
-                const items = searchList.slice(i, Math.min(searchList.length, i + batchSize));
-                const matchingVerses = items.filter(v =>
-                    isEnglishSearch ? matchText(v.translation, searchQuery, searchQueryAsRegex) :
-                        isUthmani ?
-                            matchText(v.uthmani, searchQuery, searchQueryAsRegex)
-                            : matchText(v.simple, searchQuery, searchQueryAsRegex)
-                            || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
+            abortController = new AbortController();
 
-                showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex, true);
-                progress.innerText = getProgressBar(i, searchList.length);
-            }, () => {
-                progress.innerText = "";
-
-                makeCopyButtonClickable();
+            try {
+                await asyncFor(searchList.length, batchSize, abortController.signal, (i) => {
+                    const items = searchList.slice(i, Math.min(searchList.length, i + batchSize));
+                    const matchingVerses = items.filter(v =>
+                        isEnglishSearch ? matchText(v.translation, searchQuery, searchQueryAsRegex) :
+                            isUthmani ?
+                                matchText(v.uthmani, searchQuery, searchQueryAsRegex)
+                                : matchText(v.simple, searchQuery, searchQueryAsRegex)
+                                || matchText(v.uthmani, searchQuery, searchQueryAsRegex));
 
 
+                    showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex, true);
+                    progress.innerText = getProgressBar(i, searchList.length);
+                }, () => {
+                    progress.innerText = "";
+                    makeCopyButtonClickable();
+                });
+            } catch (x) {
 
-            });
+            }
+
+
         } else {
             showAutocomplete([]);
         }
@@ -692,6 +722,10 @@
         }
 
 
+    }
+
+    function clearAutoComplete() {
+        autocompleteContainer.innerHTML = "";
     }
 
     function showAutocomplete(matchingVerses, isUthmani, searchQuery, searchQueryAsRegex, appendResult) {
